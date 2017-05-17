@@ -29,7 +29,7 @@ namespace CSharpPayture
         GetList,
         ApplePay,
         Update,
-        PaySubmit3DS
+        PaySubmit3DS,
     }
 
     public enum PaytureParams
@@ -62,6 +62,8 @@ namespace CSharpPayture
         Description,
         PaRes,
         MD,
+        PayToken,
+        Method
     }
 
     public enum PaytureAPIType
@@ -69,6 +71,12 @@ namespace CSharpPayture
         api,
         apim,
         vwapi
+    }
+
+    public enum ApplePayMethods
+    {
+        PAY,
+        BLOCK
     }
 
     public enum SessionType
