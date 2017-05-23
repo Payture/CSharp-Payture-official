@@ -33,7 +33,7 @@ namespace CSharpPayture
             if ( !String.IsNullOrEmpty( customerKey ) )
                 _requestKeyValuePair.Add( PaytureParams.CustomerKey, customerKey );
             if ( !String.IsNullOrEmpty( paytureId ) )
-                _requestKeyValuePair.Add( PaytureParams.CustomerKey, customerKey );
+                _requestKeyValuePair.Add( PaytureParams.PaytureId, paytureId );
             ExpandTransaction();
             _expanded = true;
             return this;

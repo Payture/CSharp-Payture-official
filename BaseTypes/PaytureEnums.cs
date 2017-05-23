@@ -8,6 +8,7 @@ namespace CSharpPayture
 {
  public enum PaytureCommands
     {
+        None,
         Pay,
         Block,
         Unblock,
@@ -62,7 +63,10 @@ namespace CSharpPayture
         PaRes,
         MD,
         PayToken,
-        Method
+        Method,
+        TemplateTag,
+        Language,
+        Unknown
     }
 
     public enum PaytureAPIType

@@ -29,7 +29,7 @@ namespace CSharpPayture
         }
 
         /// <summary>
-        /// Expand transaction for InPay  Methods: Pay/Add (on Payture side)
+        /// Expand transaction for InPay  Methods: Pay
         /// </summary>
         /// <param name="orderId"></param>
         /// <param name="amount"></param>
