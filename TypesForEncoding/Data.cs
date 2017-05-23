@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CSharpPayture
 {
-    public class DataBase : EncodeString
+    public class Data : EncodeString
     {
         public string SessionType { get; set; }
         public string IP { get; set; }
@@ -14,7 +14,8 @@ namespace CSharpPayture
         public string Language { get; set; }
         public string OrderId { get; set; }
         public Int64? Amount { get; set; }
-        public DataBase(SessionType sessionType, string orderId, Int64 amount, string ip, string template = null, string lang = null )
+        public string Url { get; set; }
+        public Data(SessionType sessionType, string orderId, Int64 amount, string ip, string url = null,string template = null, string lang = null )
         {
             SessionType = sessionType == CSharpPayture.SessionType.None ? null : sessionType.ToString();
             OrderId = orderId;
@@ -22,23 +23,16 @@ namespace CSharpPayture
             IP = ip;
             TemplateTag = template;
             Language = lang;
-        }
-        public DataBase() { }
-    }
-    public class Data : DataBase
-    {
-        public string Url { get; set; }
-        public Data( SessionType sessionType, string orderId, Int64 amount, string ip, string url = null, string template = null, string lang = null ) : base( sessionType, orderId, amount, ip, template, lang )
-        {
             Url = url;
         }
+        public Data() { }
     }
 
-    public class DATA : DataBase
+    public class DATA : Data
     {
         public string ConfirmCode { get; set; }
         public string CustomFields { get; set; }
-        public DATA( SessionType sessionType, string orderId, Int64 amount, string ip, string confirmCode = null,  string[] customFields = null, string template = null, string lang = null ) : base( sessionType, orderId, amount, ip, template, lang )
+        public DATA( SessionType sessionType, string orderId, Int64 amount, string ip, string confirmCode = null,  string[] customFields = null, string template = null, string lang = null ) : base( sessionType, orderId, amount, ip, null,template, lang )
         {
             ConfirmCode = confirmCode;
             var i = 1;

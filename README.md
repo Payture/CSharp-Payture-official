@@ -140,6 +140,7 @@ After transaction is expanded you can send request to the Payture server via one
 
 ### PayInfo <a id="PayInfo"></a>
 This object used for PaytureAPI and consist of following fields:
+
 | Fields's name    | Field's type | Definition                                      |
 | ---------------- | ------------ | ----------------------------------------------- |
 | OrderId          | string       | Payment identifier in your service system.      |
