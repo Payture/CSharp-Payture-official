@@ -12,7 +12,7 @@ using CSharpPaytureAPI;
 
 ## Payture API tutorial
 Before fall into the deep, we're need to provide you general conception of working with our API function. See picture: 
-![](paytureAPICSharp.png)
+![](generalCSharp.jpg)
 
 ## Steps
 
