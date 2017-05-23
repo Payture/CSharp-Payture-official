@@ -185,30 +185,31 @@ var card3 = new Card  //this used in PaytureCommand.Pay on merchant side
 This is enum of **all** available commands for Payture API.
 
 PaytureCommands list and availability in every api type
-| Command      | Api | InPay | EWallet | Apple |
-| ------------ | --- | ----- | ------- | ----- |
-| Pay          |      |        |          |       |
-| Block        |      |       |         |       |
-| Charge       |      |        |          |       |
-| Refund       |      |        |          |       |
-| Unblock      |      |        |          |       |
-| GetState     |      |       |         |       |
-| Init         |     |        |          |       |
-| PayStatus    |     |        |          |       |
-| Add          |     |       |          |       |
-| Register     |     |       |          |       |
-| Update       |     |       |          |       |
-| Check        |     |       |          |       |
-| Delete       |     |       |          |       |
-| Activate     |     |       |          |       |
-| Remove       |     |       |          |       |
-| GetList      |     |       |          |       |
-| SendCode     |     |       |          |       |
-| ApplePay     |     |       |         |       |
-| AppleBlock   |     |       |         |       |
-| Pay3DS       |      |       |         |        |
-| Block3DS     |      |       |         |        |
-| PaySubmit3DS |     |       |          |       |
+
+| Command      | Api | InPay | EWallet | Apple | Description                                                                                                            |
+| ------------ | --- | ----- | ------- | ----- | ---------------------------------------------------------------------------------------------------------------------- |
+| Pay          |  +  |   +   |    +    |       | Command for pay transaction. In InPay and EWallet can be used for Block operation                                      |
+| Block        |  +  |       |         |       | Block of funds on customer card. You can write-off of funds by Charge command or unlocking of funds by Unblock command |
+| Charge       |  +  |   +   |    +    |       | Write-off of funds from customer card                                                                                  |
+| Refund       |  +  |   +   |    +    |       | Operation for refunds                                                                                                  |
+| Unblock      |  +  |   +   |    +    |       | Unlocking of funds  on customer card                                                                                   |
+| GetState     |  +  |       |         |       | Get the actual state of payments in Payture processing system                                                          |
+| Init         |     |   +   |    +    |       | Payment initialization, customer will be redirected on Payture payment gateway page for enter card's information       |
+| PayStatus    |     |   +   |    +    |       | Get the actual state of payments in Payture processing system                                                          |
+| Add          |     |       |    +    |       | Register new card in Payture system                                                                                    |
+| Register     |     |       |    +    |       | Register new customer account                                                                                          |
+| Update       |     |       |    +    |       | Update customer account                                                                                                |
+| Check        |     |       |    +    |       | Check for existing customer account in Payture system                                                                  |
+| Delete       |     |       |    +    |       | Delete customer account from Payture system                                                                            |
+| Activate     |     |       |    +    |       | Activate registered card in Payture system                                                                             |
+| Remove       |     |       |    +    |       | Delete card from Payture system                                                                                        |
+| GetList      |     |       |    +    |       | Return list of registered cards for the customer existed in Payture system                                             |
+| SendCode     |     |       |    +    |       | Additional authentication for customer payment                                                                         |
+| ApplePay     |     |       |         |       | Command for one-stage charge for Apple                                                                                 |
+| AppleBlock   |     |       |         |       | Block of funds on customer card attached in Apple Wallet                                                               |
+| Pay3DS       |  +  |       |         |   +   | Command for one-stage charge from card with 3-D Secure                                                                 |
+| Block3DS     |  +  |       |         |   +   | Block of funds on customer card with 3-D Secure                                                                        |
+| PaySubmit3DS |     |       |    +    |       | Commands for completed charging funds from card with 3-D Secure                                                        |
 
 
 ### Customer <a id="Customer"></a>
