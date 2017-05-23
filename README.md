@@ -187,28 +187,28 @@ This is enum of **all** available commands for Payture API.
 PaytureCommands list and availability in every api type
 | Command      | Api | InPay | EWallet | Apple |
 | ------------ | --- | ----- | ------- | ----- |
-| Pay          |  +  |   +   |    +    |       |
-| Block        |  +  |       |         |       |
-| Charge       |  +  |   +   |    +    |       |
-| Refund       |  +  |   +   |    +    |       |
-| Unblock      |  +  |   +   |    +    |       |
-| GetState     |  +  |       |         |       |
-| Init         |     |   +   |    +    |       |
-| PayStatus    |     |   +   |    +    |       |
-| Add          |     |       |    +    |       |
-| Register     |     |       |    +    |       |
-| Update       |     |       |    +    |       |
-| Check        |     |       |    +    |       |
-| Delete       |     |       |    +    |       |
-| Activate     |     |       |    +    |       |
-| Remove       |     |       |    +    |       |
-| GetList      |     |       |    +    |       |
-| SendCode     |     |       |    +    |       |
+| Pay          |      |        |          |       |
+| Block        |      |       |         |       |
+| Charge       |      |        |          |       |
+| Refund       |      |        |          |       |
+| Unblock      |      |        |          |       |
+| GetState     |      |       |         |       |
+| Init         |     |        |          |       |
+| PayStatus    |     |        |          |       |
+| Add          |     |       |          |       |
+| Register     |     |       |          |       |
+| Update       |     |       |          |       |
+| Check        |     |       |          |       |
+| Delete       |     |       |          |       |
+| Activate     |     |       |          |       |
+| Remove       |     |       |          |       |
+| GetList      |     |       |          |       |
+| SendCode     |     |       |          |       |
 | ApplePay     |     |       |         |       |
 | AppleBlock   |     |       |         |       |
-| Pay3DS       |  +  |       |         |   +   |
-| Block3DS     |  +  |       |         |   +   |
-| PaySubmit3DS |     |       |    +    |       |
+| Pay3DS       |      |       |         |        |
+| Block3DS     |      |       |         |        |
+| PaySubmit3DS |     |       |          |       |
 
 
 ### Customer <a id="Customer"></a>
