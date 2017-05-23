@@ -63,7 +63,22 @@ Result of this methods is the instanse of Transaction object which you expand in
 This is the most difficult step, but you can do it!
 In the previous step we get the Transaction object [see here that is it](#Transaction). You need expand it, below you find detailed description how do this for every type of api.
 
-At this step we're call only one method: ExtendRequest(...). But there are more overload exist!
+At this step we're call only one method: ExpandTransaction(...). But there are more overload exist!
+### ExpandTransaction ( string orderId, Int64? amount )
+This overload available in any of the API type
+
+Call this for following PaytureCommands:
+* Unblock
+* Refund
+* Charge
+* GetState (PaytureAPI)
+* PayStatus (PaytureEWallet, PaytureInPay)
+
+| Parameter's name | Definition                                                        |
+| ---------------- | ----------------------------------------------------------------- |
+| orderId          | Payment identifier in your service system.                        |
+| amount           | Amount of payment kopec. (in case of GetState or PayStatus pass null)                                          |
+
 
 ### ExpandTransaction Methods for PaytureAPI
 #### ExpandTransaction( PayInfo info, IDictionary<string, dynamic> customFields, string customerKey, string paytureId  )
@@ -76,18 +91,6 @@ Description of provided params.
 | customerKey      | Customer identifier in Payture AntiFraud system.                                       |
 | customFields     | Addition fields for processing (especially for AntiFraud system).                      |
 | paytureId        | Payments identifier in Payture AntiFraud system.                                       |
-
-#### ExpandTransaction( string orderId, Int64? amount )
-Call this for following PaytureCommands:
-* Unblock
-* Refund
-* Charge
-* GetState
-
-| Parameter's name | Definition                                                        |
-| ---------------- | ----------------------------------------------------------------- |
-| orderId          | Payment identifier in your service system.                        |
-| amount           | Amount of payment kopec.                                          |
 
 
 ### ExpandTransaction Methods for PaytureInPay
