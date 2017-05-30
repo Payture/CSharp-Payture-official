@@ -4,7 +4,9 @@ This is Offical Payture API for C#. We're try to make this as simple as possible
 Here you can explore how to use our API functions!
 
 ## Install
-Just download our package from NuGet:  **Here will be name of package soon!!!!**
+Just download our package from NuGet *(please, take into account that this is the test package now)*:  **CSharpPaytureAPI**
+
+
 And include to your project:
 ```c#
 using CSharpPaytureAPI;
@@ -14,7 +16,7 @@ using CSharpPaytureAPI;
 Before fall into the deep, we're need to provide you general conception of working with our API function. See picture: 
 ![](generalCSharp.jpg)
 
-## Steps
+## [Steps](#newMerchant)
 
  * [Creating merchant account](#newMerchant)
  * [Get access to required API](#accessToAPI)
@@ -34,6 +36,7 @@ Before fall into the deep, we're need to provide you general conception of worki
 ## [Test App](#testApp)
 
 Now, let's walk through the steps from the picture above
+
 
 
 ## First Step - Creating Merchant Account <a id="newMerchant"></a>
