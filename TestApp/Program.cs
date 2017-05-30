@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CSharpPayture;
 using System.Diagnostics;
 
-namespace ClientCodeTest.cs
+namespace TestApp
 {
     partial class Program
     {
