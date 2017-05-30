@@ -43,11 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseTypes\APITransaction.cs" />
+    <Compile Include="BaseTypes\CardInfo.cs" />
     <Compile Include="BaseTypes\PaytureEnums.cs" />
     <Compile Include="BaseTypes\PaytureResponse.cs" />
     <Compile Include="BaseTypes\RequestClient.cs" />
     <Compile Include="BaseTypes\Transaction.cs" />
+    <Compile Include="BaseTypes\TransactionAPI.cs" />
+    <Compile Include="BaseTypes\TransactionDigitalWallet.cs" />
     <Compile Include="BaseTypes\TransactionEWallet.cs" />
     <Compile Include="BaseTypes\TransactionInPay.cs" />
     <Compile Include="Merchant.cs" />

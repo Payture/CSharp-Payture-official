@@ -28,6 +28,7 @@ namespace CSharpPayture
         SendCode,
         GetList,
         ApplePay,
+        AndroidPay,
         Update,
         PaySubmit3DS,
     }
@@ -66,6 +67,9 @@ namespace CSharpPayture
         Method,
         TemplateTag,
         Language,
+        Product,
+        Total,
+        Url,
         Unknown
     }
 
@@ -76,12 +80,11 @@ namespace CSharpPayture
         vwapi
     }
 
-    public enum ApplePayMethods
+    public enum DigitalPayMethods
     {
         PAY,
         BLOCK
     }
-
     public enum SessionType
     {
         Add,

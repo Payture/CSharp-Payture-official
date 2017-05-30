@@ -27,9 +27,9 @@ namespace CSharpPayture
             _host = host;
         }
 
-        public APITransaction Api(PaytureCommands command)
+        public TransactionAPI Api(PaytureCommands command)
         {
-            return new APITransaction( command, this );
+            return new TransactionAPI( command, this );
         }
 
         public TransactionInPay InPay( PaytureCommands command )
@@ -42,10 +42,15 @@ namespace CSharpPayture
             return new TransactionEWallet( command, this );
         }
 
-      /*  public PaytureAPI GETPaytureApplePay( PaytureCommands command )
+        public TransactionDigitalWallet Apple( PaytureCommands command )
         {
-            return new PaytureAPI( this, PaytureAPIType.api );
-        }*/
+            return new TransactionDigitalWallet( command, this, PaytureCommands.ApplePay );
+        }
+    
+        public TransactionDigitalWallet Android( PaytureCommands command )
+        {
+            return new TransactionDigitalWallet( command, this, PaytureCommands.AndroidPay );
+        }
 
     }
 }
