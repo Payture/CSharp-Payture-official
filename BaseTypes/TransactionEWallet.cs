@@ -49,13 +49,13 @@ namespace CSharpPayture
         /// </summary>
         /// <param name="data"></param>
         /// <returns>current expanded transaction</returns>
-        public Transaction ExpandTransaction( Customer customer, Card card, DATA data, bool regCard = true ) 
+        public Transaction ExpandTransaction( Customer customer, Card card, Data data, bool regCard = true ) 
         {
             if ( customer == null || card == null || data == null )
                 return this;
             _sessionType = ( SessionType )Enum.Parse( typeof( SessionType ), data.SessionType );
             var newCustom = new Customer( customer.VWUserLgn, customer.VWUserPsw );
-            var newData = new DATA {SessionType = data.SessionType, OrderId = data.OrderId, Amount = data.Amount, IP = data.IP, ConfirmCode = data.ConfirmCode };
+            var newData = new Data {SessionType = data.SessionType, OrderId = data.OrderId, Amount = data.Amount, IP = data.IP, ConfirmCode = data.ConfirmCode };
             var newCard = new Card();
             if ( regCard )
             {
@@ -69,7 +69,7 @@ namespace CSharpPayture
             {
                 newCustom.PhoneNumber = customer.PhoneNumber;
                 newCustom.Email = customer.Email;
-                newData = new DATA { SessionType = data.SessionType, IP = data.IP, TemplateTag = data.TemplateTag, Language = data.Language, Amount = data.Amount };
+                newData = new Data { SessionType = data.SessionType, IP = data.IP, TemplateTag = data.TemplateTag, Language = data.Language, Amount = data.Amount };
                 if( data.SessionType != SessionType.Add.ToString() )
                 {
                     newCard = new Card { CardId = card.CardId };

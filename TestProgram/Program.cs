@@ -19,6 +19,12 @@ namespace ClientCodeTest.cs
         static PaytureResponse response = null;
         static void Main( string[] args )
         {
+            Console.WriteLine( "Press space for get description of commands for this console program." );
+            if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
+            {
+                Help();
+                Console.WriteLine("Press enter for continue."); Console.ReadLine();
+            }
             Console.WriteLine( $"Merchant account settings: {Environment.NewLine}\tMerchantName={_merchantKey}{Environment.NewLine}\tMerchantPassword={_merchantPassword}{Environment.NewLine}\tHOST={_host}{Environment.NewLine}" );
             Console.WriteLine( "Press space for change Merchant account settings" );
             if ( Console.ReadKey().Key == ConsoleKey.Spacebar )

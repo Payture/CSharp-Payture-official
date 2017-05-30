@@ -41,7 +41,7 @@ namespace CSharpPayture
         /// </summary>
         /// <param name="body"></param>
         /// <returns>response object</returns>
-        protected PaytureResponse ParseXMLResponse( string body )
+        protected PaytureResponse ParseXMLResponse( string body, PaytureCommands command )
         {
             XElement xmlBody = XElement.Parse( body );
             var attributes = new Dictionary<string, string>();
@@ -59,8 +59,18 @@ namespace CSharpPayture
                 Success = Boolean.Parse( attributes.Where( n => n.Key == "Success" ).FirstOrDefault().Value ),
                 ErrCode = attributes.Where( n => n.Key == "ErrCode" ).FirstOrDefault().Value,
                 Attributes = attributes,
-                InternalElements = elems
+                InternalElements = elems,
+                ResponseBodyXML = body
             };
+            if( command == PaytureCommands.GetList )
+            {
+                paytureResponse.ListCards = new List<CardInfo>();
+                var cards = xmlBody.Descendants().Where( n => n.Name == "Item" ).Select( n => new CardInfo( n.Attribute( "CardName" ).Value, n.Attribute( "CardId" ).Value,
+                     n.Attribute( "CardHolder" ).Value, n.Attribute( "Status" ).Value,
+                     Boolean.Parse( n.Attribute( "Expired" ).Value ), Boolean.Parse( n.Attribute( "NoCVV" ).Value ) ) );
+
+                paytureResponse.ListCards.AddRange(cards);
+            }
            // OnParseResponse( paytureResponse );
             return paytureResponse;
         }
@@ -86,7 +96,7 @@ namespace CSharpPayture
         protected PaytureResponse ParseResponseInternal( Task<string> str, PaytureCommands command, SessionType sessionType = SessionType.None )
         {
             var result = str.Result;
-            var paytureResponse = ParseXMLResponse( result );
+            var paytureResponse = ParseXMLResponse( result, command );
             paytureResponse.APIName = command;
             return paytureResponse;
         }

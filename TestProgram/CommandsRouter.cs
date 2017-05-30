@@ -37,6 +37,9 @@ namespace ClientCodeTest.cs
             { PaytureParams.Method, "" },
             { PaytureParams.Language, "RU" },
             { PaytureParams.TemplateTag, "" },
+            { PaytureParams.Url, "" },
+            { PaytureParams.Total, "1" },
+            { PaytureParams.Product, "Something" }
         };
 
 
@@ -44,18 +47,22 @@ namespace ClientCodeTest.cs
         public static void Router ( )
         {
             Console.WriteLine( "Type the command:" );
-            var command = Console.ReadLine().Split(' ');
+            var command = Console.ReadLine().ToUpper().Split(' ');
             if ( command.Count() < 1)
                 return;
             var apiType = PaytureAPIType.api;//api type
             var sessionType = "";
             var transactionSide = "";
             var regOrNoRegCard = "";
-            var cmd = command.ElementAt( 0 ).ToUpper();  //main command
-            if ( !new[] { "FIELDS", "COMMANDS", "CHANGEFIELDS" }.Contains( cmd ) )
+            var cmd = command[ 0 ];  //main command
+            if ( !new[] { "FIELDS", "COMMANDS", "CHANGEFIELDS", "HELP", "CHANGEMERCHANT" }.Contains( cmd ) )
             {
-                if ( !Enum.TryParse( command.ElementAt( 1 ), true, out apiType ) )
-                    return;
+                var api = command[ 1 ];
+                if(api == "EWALLET")
+                    apiType = PaytureAPIType.vwapi;
+                else if(api =="INPAY")
+                    apiType = PaytureAPIType.apim;
+                return;
             }
             if ( command.Count() > 2 )
             {
@@ -241,7 +248,7 @@ namespace ClientCodeTest.cs
                         break;
                     }
             }
-            if ( !new[] { "FIELDS", "CHANGEFIELDS", "COMMANDS", "CHANGEMERCHANT" }.Contains( cmd ) )
+            if ( !new[] { "FIELDS", "CHANGEFIELDS", "COMMANDS", "CHANGEMERCHANT", "HELP" }.Contains( cmd ) )
                 WriteResult( response );
 
         }
@@ -294,9 +301,9 @@ namespace ClientCodeTest.cs
             return new Customer( allFields[ PaytureParams.VWUserLgn ], allFields[ PaytureParams.VWUserPsw ], allFields[ PaytureParams.PhoneNumber ], allFields[ PaytureParams.Email ] );
         }
         
-        static DATA DataFromCurrentSettings()
+        static Data DataFromCurrentSettings()
         {
-            return  new DATA
+            return  new Data
             {
                 Amount = allFields[ PaytureParams.Amount ] == null ? null : (long?) long.Parse( allFields[ PaytureParams.Amount ] ),
                 IP = allFields[ PaytureParams.IP ],
@@ -359,7 +366,7 @@ namespace ClientCodeTest.cs
             response = trans.ExpandTransaction( orderId,  amount ).ProcessOperation();
         }
 
-        private static DATA DataForInit(SessionType type)
+        private static Data DataForInit(SessionType type)
         {
             GenerateAmount();
             GenerateOrderId();
@@ -417,8 +424,29 @@ namespace ClientCodeTest.cs
 
         public static void ListCommands()
         {
-            Console.WriteLine( "Common commands:\n\tfields\n\tchangefields\n\tcommands\n\n" );
-            Console.WriteLine( "Payments commands:\n\tpay\n\tblock\n\tunblock\n\tcharge\n\trefund\n\tgetstate\n\tpaystatus\n\tregister\n\tcheck\n\tupdate\n\tremove\n\tadd\n\tactivate\n\tdelete\n\tgetlist\n\tsendcode\n\n\n" );
+            Console.WriteLine("Commands for help:\n" + 
+                    "\tfields\t\t- list current key-value pairs that used in request to Payture server.\n" +
+                    "\tchangefields\t\t- command for changing current values of  key-value pairs that used in request to Payture server.\n" + 
+                    "\tcommands\t\t- list avaliable commands for this console program.\n" + 
+                    "\tchangemerchant\t\t- commands for changing current merchant account settings.\n" +
+                    "\thelp\t\t- commands that types this text (description of commands that you can use in this console program.).\n\n");
+            Console.WriteLine("Commands for invoke PaytureAPI functions.\n" +
+                    "\tpay\t-\n" +
+                    "\tblock\t- only for api\n" + 
+                    "\tcharge\t-\n" + 
+                    "\tunblock\t-\n" +
+                    "\trefund\t-\n" + 
+                    "\tgetsstate\t- only for api\n" +
+                    "\tpaystatus\t- for vwapi and apim\n" + 
+                    "\tinit\t-\n" + 
+                    "\tregister\t-\n" +
+                    "\tcheck\t-\n" + 
+                    "\tupdate\t-\n" + 
+                    "\tdelete\t-\n" +
+                    "\tadd\t-\n" +
+                    "\tactivate\t-\n" +   
+                    "\tsendcode\t-\n" +
+                    "\tremove\t-\n"  );
         }
 
 
@@ -447,6 +475,17 @@ namespace ClientCodeTest.cs
             _host = Console.ReadLine();
             Console.WriteLine( $"Merchant account settings: {Environment.NewLine}\tMerchantName={_merchantKey}{Environment.NewLine}\tMerchantPassword={_merchantPassword}{Environment.NewLine}\tHOST={_host}{Environment.NewLine}" );
             _merchant = new Merchant( _merchantKey, _merchantPassword, _host );
+        }
+
+        static void Help()
+        {
+            Console.WriteLine("Then console promt you 'Type command' - you can type commands for invoke PaytureAPI functions and you can types commands for help.");
+            Console.WriteLine("The structure of commands for invoke PaytureAPI functions:\n\t=>Fist keyword is one of avaliable command for PaytureAPI (like pay, block for example);\n");
+            Console.WriteLine("\t=>For second keyword you must state the api type, one of following:\n\t\tapi - for PaytureAPI\n\t\tinpay - for PaytureInPay\n\t\tewallet - for PaytureEWallet\n\t\tapple - for PaytureApplePay\n\t\tandroid - for PaytureAndroidPay\n");
+            Console.WriteLine("\t=>Third keyword is needed for specify:\n\t\tSessionType in 'init' command (can be 'pay', 'block', 'add').");
+            Console.WriteLine("\t=>Fourth keyword used for specify transaction side for 'pay' ");
+            Console.WriteLine("See commands description:\n\n");
+            ListCommands();
         }
     }
 }
