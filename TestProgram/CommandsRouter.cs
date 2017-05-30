@@ -62,7 +62,6 @@ namespace ClientCodeTest.cs
                     apiType = PaytureAPIType.vwapi;
                 else if(api =="INPAY")
                     apiType = PaytureAPIType.apim;
-                return;
             }
             if ( command.Count() > 2 )
             {
