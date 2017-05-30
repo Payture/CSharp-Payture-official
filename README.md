@@ -9,7 +9,7 @@ Just download our package from NuGet *(please, take into account that this is th
 
 And include to your project:
 ```c#
-using CSharpPaytureAPI;
+using CSharpPayture;
 ```
 
 ## Payture API tutorial
