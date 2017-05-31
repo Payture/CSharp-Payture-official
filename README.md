@@ -102,16 +102,42 @@ Call this for following PaytureCommands:
 
 ### ExpandTransaction Methods for PaytureAPI
 #### ExpandTransaction( PayInfo info, IDictionary<string, dynamic> customFields, string customerKey, string paytureId  )
-This overload you call for api **Pay** or **Block** methods ( PaytureCommands.Pay or PaytureCommands.Block respectively )
+This overload you call for api methods:
+* **Pay** (PaytureCommands.Pay).
+* **Block**  (PaytureCommands.Block).
+
 Description of provided params.
 
 | Parameter's name | Definition                                                                             |
 | ---------------- | -------------------------------------------------------------------------------------- |
 | info             | Params for transaction processings [see here for explore PayInfo object](#PayInfo)     |
 | customerKey      | Customer identifier in Payture AntiFraud system.                                       |
-| customFields     | Addition fields for processing (especially for AntiFraud system).                      |
+| customFields     | Additional fields for processing (especially for AntiFraud system).                    |
 | paytureId        | Payments identifier in Payture AntiFraud system.                                       |
 
+
+Example for Pay:
+```c#
+var payInfo = new PayInfo(
+    "4111111111111112", // card number, required
+     10, //expiration month, required
+     20, //expiration year, required
+     "Test Test", // cardholder name, required
+     123, // secure code, required
+     "TestOrder0000000000512154545", // payment's identifier in Merchant system
+     41000 //amount, required
+);
+var customFields = new Dictionary<string, dynamic>{
+    { "IP", "93.120.05.36" },
+    { "Description", "SomeUsefullHere" }
+}; //optional, can be null 
+
+var customerKey = "testKey"; // 
+var paytureId = ""; //optional 
+
+//Expand transaction
+merchant.API( PaytureCommands.Pay ).ExpandTransaction( payInfo, customFields, customerKey, paytureId );
+```
 
 ### ExpandTransaction Methods for PaytureInPay
 #### ExpandTransaction( Data data )
@@ -132,15 +158,16 @@ var data = new Data( SessionType.Pay, orderId, amount, ip );
 merchant.InPay( PaytureCommands.Init ).ExpandTransaction( data );
 ```
 
-
 ### ExpandTransaction Methods for PaytureEWallet
-#### ExpandTransaction( Customer customer, Card card, Data data, bool regCard = true ) 
+#### ExpandTransaction( Customer customer, string cardId, Data data ) 
 This overload you call for api 
 * **Init** (PaytureCommands.Init). 
 
 Example for SessionType=Pay and SessionType=Block:
 ```c#
-var sessionType = SessionType.Pay //= SessionType.Block,  required
+var cardId = "40252318-de07-4853-b43d-4b67f2cd2077";
+var customer = new Customer( "testCustomerEW", "testPass" ); 
+var sessionType = SessionType.Pay; //= SessionType.Block,  required
 var orderId = "TESTORD000000000000000000"; // required
 var amount = 102000; // in kopec, required
 var ip = "93.45.120.14"; // required
@@ -148,21 +175,107 @@ var product = "SomeCoolProduct"; // optional, maybe empty or null
 var total = amount; // optional, maybe empty or null
 var template = "tempTag"; // optional, maybe empty or null
 var lang = "RU"; // optional, maybe empty or null
-var customer = new Customer("testCustomerEW", "testPass"); //required
-var card = new Card //required
-{
-    CardId = "40252318-de07-4853-b43d-4b67f2cd2077"
-};
-var data = new Data (sessionType, orderId, amount, ip, product, total, null, template, lang ) // required
+var data = new Data ( sessionType, orderId, amount, ip, product, total, template, lang ) // required
 
 //Expand transaction
-merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, card, data );
+merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, cardId, data ); //SessionType=Pay or SessionType=Block
+```
+
+
+Example for SessionType=Add:
+```c#
+var cardId = null; //we're pass null for Add SessionType
+var customer = new Customer( "testCustomerEW", "testPass" ); 
+var sessionType = SessionType.Add; //  required
+var ip = "93.45.120.14"; // required
+var template = "tempTag"; // optional, maybe empty or null
+var lang = "RU"; // optional, maybe empty or null
+var data = new Data 
+{
+    SessionType = sessionType.ToString(),
+    IP = ip,
+    TemplateTag = template,
+    Language = lang
+}; // required
+
+//Expand transaction
+merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, null, data ); // SessionType=Add
+```
+
+#### ExpandTransaction( Customer customer, string cardId, int secureCode, Data data ) 
+This overload you call for api 
+* **Pay** (PaytureCommands.Pay) - on Merchant side for REGISTERED card
+
+Example for SessionType=Pay and SessionType=Block:
+```c#
+var sessionType = SessionType.Pay; //= SessionType.Block,  required
+var orderId = "TESTORD000000000000000000"; // required
+var cardId = "40252318-de07-4853-b43d-4b67f2cd2077"; // required
+var secureCode = 123; // required
+var amount = 102000; // in kopec, required
+var ip = "93.45.120.14"; // required
+var confirmCode = "SomeCoolProduct"; // optional, maybe empty or null
+var customFields = ""; // optional maybe null
+var customer = new Customer( "testCustomerEW", "testPass" ); //required
+var data = new Data ( sessionType, orderId, amount, ip ) // required
+data.ConfirmCode = confirmCode;
+data.CustomFields = customFields;
+//Expand transaction
+merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, cardId, secureCode, data );
 
 ```
-* **Pay** (on merchant side for registered or no registered cards);
+#### ExpandTransaction( Customer customer, Card card, Data data ) 
+This overload you call for api 
+* **Pay** (PaytureCommands.Pay) - on Merchant side for NOT REGISTERED card
+
+Example for SessionType=Pay and SessionType=Block:
+```c#
+var sessionType = SessionType.Pay; //= SessionType.Block,  required
+var orderId = "TESTORD000000000000000000"; // required
+var amount = 102000; // in kopec, required
+var ip = "93.45.120.14"; // required
+var confirmCode = "SomeCoolProduct"; // optional, maybe empty or null
+var customFields = ""; // optional maybe null
+var data = new Data ( sessionType, orderId, amount, ip ) // required
+data.ConfirmCode = confirmCode;
+data.CustomFields = customFields;
+
+var customer = new Customer( "testCustomerEW", "testPass" ); //required
+
+var card = new Card( 
+    "4111111111111112", //card number
+    10, //expiration month
+    20, //expiration year
+    "Card Holder", //CardHolder Name
+    111, //secure code
+); //required
+
+//Expand transaction
+merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, card, data );
+
+```
 
 #### ExpandTransaction( Customer customer, Card card )
-This overload you call for api **Add** method ( PaytureCommand.Add ) on merchant side.
+This overload you call for api
+* **Add** method ( PaytureCommand.Add ) on Merchant side.
+
+Example:
+```c#
+var customer = new Customer( "testCustomerEW", "testPass" ); //required
+var card = new Card( 
+    "4111111111111112", //card number
+    10, //expiration month
+    20, //expiration year
+    "Card Holder", //CardHolder Name
+    111, //secure code
+); //required
+
+//Expand transaction
+merchant.EWallet( PaytureCommands.Add ).ExpandTransaction( customer, card );
+```
+
+Please note, that you can add card *only for registered customer*.
+
 
 #### ExpandTransaction( Customer customer )
 This overload is called for following api methods:
@@ -174,12 +287,74 @@ This overload is called for following api methods:
 * **GetList** (PaytureCommands.GetList)
 Description of recieved [Customer data see here](#Customer).
 
+Example for PaytureCommands.Register:
+```c#
+var customer = new Customer( 
+    "testCustomerEW", // login, required
+    "testPass", //password, required
+    "78456865353", //phone, optional
+    "newCustTest@gmailTest@.ru" // email, optional
+     ); 
+//Expand transaction     
+merchant.EWallet( PaytureCommands.Reqister ).ExpandTransaction( customer );
+```
+
+
+
 #### ExpandTransaction( Customer customer, string cardId, Int64? amount, string orderId = null )
 This overload is called for api methods: 
 * **SendCode** (PaytureCommands.SendCode). You need to specify all parameters include orderId.
+Example:
+```c#
+var customer = new Customer( "testCustomerEW", "testPass" ); 
+var cardId = "40252318-de07-4853-b43d-4b67f2cd2077";
+var amount = 50000; 
+var orderId = "TESTORD000000000000000000";
+//Expand transaction
+merchant.EWallet( PaytureCommands.SendCode ).ExpandTransaction( customer, cardId, amount, orderId );
+```
 * **Activate** (PaytureCommands.Activate). Specify customer, cardId and amount for this operation.
+Example:
+```c#
+var customer = new Customer( "testCustomerEW", "testPass" ); 
+var cardId = "40252318-de07-4853-b43d-4b67f2cd2077";
+var amount = 100; //pass small amount for activate
+//Expand transaction
+merchant.EWallet( PaytureCommands.Activate ).ExpandTransaction( customer, cardId, amount );
+```
 * **Remove** (PaytureCommands.Remove). You need to specify customer and cardId only for this operation. For amount pass null.
+Example:
+```c#
+var customer = new Customer( "testCustomerEW", "testPass" ); 
+var cardId = "40252318-de07-4853-b43d-4b67f2cd2077";
+//Expand transaction
+merchant.EWallet( PaytureCommands.Remove ).ExpandTransaction( customer, cardId, null );
+```
 
+
+#### ExpandTransaction( string sessionId )
+This overload is called for api methods: 
+* **Pay** (PaytureCommands.Pay). On Payture side
+* **Add** (PaytureCommands.Add). On Payture side
+
+Example for PaytureCommands.Pay:
+```c#
+var sessionId = "e5c43d9f-2646-42bc-aeec-0b9005ceb972"; //received from PaytureCommands.Init 
+
+//Expand transaction
+merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( sessionId );
+```
+
+#### ExpandTransaction( string MD, string paRes )
+This overload is called for api methods: 
+* **PaySubmut3DS** (PaytureCommands.PaySubmit3DS).
+Example for:
+```c#
+var md = "20150624160356619170 "; //received from ACS 
+var pares = "ODJhYTk0NGUtMDk0ZlKJjjhbjlsrglJKJHNFKSRFLLkjnksdfjgdlgkd.... "; //received from ACS 
+//Expand transaction
+merchant.EWallet( PaytureCommands.PaySubmit3DS ).ExpandTransaction( md, pares );
+```
 
 ### ExpandTransaction Methods for PaytureApplePay and PaytureAndroidPay
 #### ExpandTransaction( string payToken, string orderId, int? amount )
