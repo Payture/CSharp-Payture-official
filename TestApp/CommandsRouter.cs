@@ -27,7 +27,6 @@ namespace TestApp
             { PaytureParams.OrderId, "" },
             { PaytureParams.SessionType, SessionType.None.ToString() },
             { PaytureParams.PAN, "4111111111111112" },
-            { PaytureParams.CardId, "" },
             { PaytureParams.CustomerKey, "testCustomer" },
             { PaytureParams.PaytureId, "" },
             { PaytureParams.CustomFields, "" },
@@ -303,7 +302,8 @@ namespace TestApp
 
         static void GenerateAmount()
         {
-            allFields[ PaytureParams.Amount ] =  Random.Next( 50, 100000 ).ToString();
+            var num = Random.Next( 50, 100000 );
+            allFields[ PaytureParams.Amount ] =  num.ToString();
         }
 
         static Card GetCard()

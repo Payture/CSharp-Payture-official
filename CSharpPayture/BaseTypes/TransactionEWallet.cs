@@ -85,10 +85,10 @@ namespace CSharpPayture
         /// <returns>current expanded transaction</returns>
         public Transaction ExpandTransaction( Customer customer, string cardId, Data data ) 
         {
-            if ( customer == null || cardId == null || data == null )
+            if ( customer == null || data == null )
                 return this;
             _sessionType = ( SessionType )Enum.Parse( typeof( SessionType ), data.SessionType );
-            var str = customer.GetPropertiesString() + $"CardId={cardId};" + data.GetPropertiesString() + data.CustomFields;
+            var str = customer.GetPropertiesString() + ( cardId == null ? "" : $"CardId={cardId};" ) + data.GetPropertiesString() + data.CustomFields;
             return ExpandInternal( PaytureParams.DATA, str );
         }
 
