@@ -27,6 +27,7 @@ namespace TestApp
             { PaytureParams.OrderId, "" },
             { PaytureParams.SessionType, SessionType.None.ToString() },
             { PaytureParams.PAN, "4111111111111112" },
+            { PaytureParams.CardId, "" },
             { PaytureParams.CustomerKey, "testCustomer" },
             { PaytureParams.PaytureId, "" },
             { PaytureParams.CustomFields, "" },
@@ -146,7 +147,7 @@ namespace TestApp
                         if( !regCard )
                         {
                             var card = GetCard();
-                            response = _merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, card, data, false ).ProcessOperation();
+                            response = _merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, card, data ).ProcessOperation();
                             break;
 
                         }
@@ -157,7 +158,7 @@ namespace TestApp
                         CircleChanges( "CardId and SecureCode" );
 
                         response = _merchant.EWallet( PaytureCommands.Pay )
-                                            .ExpandTransaction(customer, new Card { CardId = allFields[ PaytureParams.CardId ], SecureCode = int.Parse(allFields[ PaytureParams.SecureCode ]) },  data)
+                                            .ExpandTransaction(customer,  allFields[ PaytureParams.CardId ],  int.Parse(allFields[ PaytureParams.SecureCode ]),  data)
                                             .ProcessOperation();
                         break;
                     }
@@ -201,7 +202,8 @@ namespace TestApp
                         if ( apiType == PaytureAPIType.vwapi )
                         {
                             var customer = GetCustomer();
-                            response = _merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, new Card(), data ).ProcessOperation();
+                            var cardId = allFields[ PaytureParams.CardId ];
+                            response = _merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, cardId, data ).ProcessOperation();
                         }
                         else
                             response = _merchant.InPay( PaytureCommands.Init ).ExpandTransaction( data ).ProcessOperation();

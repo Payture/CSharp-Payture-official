@@ -17,6 +17,7 @@ namespace TestApp
         static string _merchantPassword = "789555";
         static Merchant _merchant = new Merchant( _merchantKey, _merchantPassword, _host );
         static PaytureResponse response = null;
+
         static void Main( string[] args )
         {
             try
@@ -32,7 +33,7 @@ namespace TestApp
                         ListCommands();
                     Console.WriteLine( "Press enter for continue." ); Console.ReadLine();
                 }
-                Console.WriteLine( $"Merchant account settings: {Environment.NewLine}\tMerchantName={_merchantKey}{Environment.NewLine}\tMerchantPassword={_merchantPassword}{Environment.NewLine}\tHOST={_host}{Environment.NewLine}" );
+               // Console.WriteLine( $"Merchant account settings: {Environment.NewLine}\tMerchantName={_merchantKey}{Environment.NewLine}\tMerchantPassword={_merchantPassword}{Environment.NewLine}\tHOST={_host}{Environment.NewLine}" );
                 Console.WriteLine( "Press space for change Merchant account settings" );
                 if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
                 {
@@ -52,6 +53,8 @@ namespace TestApp
             catch ( Exception ex )
             {
                 Console.WriteLine( $"Error occurs: {ex.Message}{Environment.NewLine}{ex.StackTrace}" );
+                Console.WriteLine( "Press any key for close console." );
+                Console.ReadKey();
             }
         }
         
