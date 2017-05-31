@@ -225,8 +225,8 @@ PaytureCommands list and availability in every api type
 
 | Command      | Api | InPay | EWallet | Apple | Android | Description                                                                                                            |
 | ------------ | --- | ----- | ------- | ----- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Pay          |  +  |   +   |    +    |       |         | Command for pay transaction. In InPay and EWallet can be used for Block operation                                      |
-| Block        |  +  |       |         |       |         | Block of funds on customer card. You can write-off of funds by Charge command or unlocking of funds by Unblock command |
+| Pay          |  +  |   +   |    +    |   +   |    +    | Command for pay transaction. In InPay and EWallet can be used for Block operation                                      |
+| Block        |  +  |       |         |   +   |    +    | Block of funds on customer card. You can write-off of funds by Charge command or unlocking of funds by Unblock command |
 | Charge       |  +  |   +   |    +    |       |         | Write-off of funds from customer card                                                                                  |
 | Refund       |  +  |   +   |    +    |       |         | Operation for refunds                                                                                                  |
 | Unblock      |  +  |   +   |    +    |       |         | Unlocking of funds  on customer card                                                                                   |
@@ -242,10 +242,8 @@ PaytureCommands list and availability in every api type
 | Remove       |     |       |    +    |       |         | Delete card from Payture system                                                                                        |
 | GetList      |     |       |    +    |       |         | Return list of registered cards for the customer existed in Payture system                                             |
 | SendCode     |     |       |    +    |       |         | Additional authentication for customer payment                                                                         |
-| ApplePay     |     |       |         |       |         | Command for one-stage charge for Apple                                                                                 |
-| AppleBlock   |     |       |         |       |         | Block of funds on customer card attached in Apple Wallet                                                               |
-| Pay3DS       |  +  |       |         |   +   |    +    | Command for one-stage charge from card with 3-D Secure                                                                 |
-| Block3DS     |  +  |       |         |   +   |    +    | Block of funds on customer card with 3-D Secure                                                                        |
+| Pay3DS       |  +  |       |         |       |         | Command for one-stage charge from card with 3-D Secure                                                                 |
+| Block3DS     |  +  |       |         |       |         | Block of funds on customer card with 3-D Secure                                                                        |
 | PaySubmit3DS |     |       |    +    |       |         | Commands for completed charging funds from card with 3-D Secure                                                        |
 
 
