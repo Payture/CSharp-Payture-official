@@ -18,9 +18,9 @@ namespace CSharpPayture
         /// <summary>
         /// Expand transaction for ApplePay and AndroidPay Methods: Pay/Block
         /// </summary>
-        /// <param name="payToken">PaymentData from PayToken for current transaction</param>
-        /// <param name="orderId">Current transaction OrderId</param>
-        /// <param name="amount">Current transaction amount in kopec - pass null for Apple Pay</param>
+        /// <param name="payToken">PaymentData from PayToken for current transaction.</param>
+        /// <param name="orderId">Current transaction OrderId.</param>
+        /// <param name="amount">Current transaction amount in kopec - pass null for Apple Pay.</param>
         /// <returns>current expanded transaction</returns>
         public Transaction ExpandTransaction( string payToken, string orderId, Int64? amount )
         {

@@ -16,9 +16,9 @@ namespace CSharpPayture
         /// <summary>
         /// Method sends data in encoded url to the Payture server
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="content"></param>
-        /// <returns>response string from the Payture server</returns>
+        /// <param name="url">Url string for request.</param>
+        /// <param name="content">FormUrlEncodedContent object with content fore request.</param>
+        /// <returns>response string from the Payture server.</returns>
         protected async Task<string> PostAsync( string url, FormUrlEncodedContent content )
         {
             try
@@ -39,7 +39,8 @@ namespace CSharpPayture
         /// <summary>
         /// Helper method for parsing received response (that in XML format)
         /// </summary>
-        /// <param name="body"></param>
+        /// <param name="body">String representation of response body</param>
+        /// <param name="command"></param>
         /// <returns>response object</returns>
         protected PaytureResponse ParseXMLResponse( string body, PaytureCommands command )
         {
