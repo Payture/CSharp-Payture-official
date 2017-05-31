@@ -19,33 +19,46 @@ namespace TestApp
         static PaytureResponse response = null;
         static void Main( string[] args )
         {
-            Console.WriteLine( "Press space for get description of commands for this console program." );
-            if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
+            try
             {
-                Help();
-                Console.WriteLine("Press enter for continue."); Console.ReadLine();
-            }
-            Console.WriteLine( $"Merchant account settings: {Environment.NewLine}\tMerchantName={_merchantKey}{Environment.NewLine}\tMerchantPassword={_merchantPassword}{Environment.NewLine}\tHOST={_host}{Environment.NewLine}" );
-            Console.WriteLine( "Press space for change Merchant account settings" );
-            if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
-            {
-                ChangeMerchant( );
-            }
-            
-            while(true)
-            {
-                Console.WriteLine( $"{Environment.NewLine}Press backspase for exit" );
-                if ( Console.ReadKey().Key == ConsoleKey.Backspace )
-                    break;
-                Router(  );
-            }
 
-            Console.ReadLine();
+
+                Console.WriteLine( "Press space for get description of commands for this console program." );
+                if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
+                {
+                    Help();
+                    Console.WriteLine( "Press space for get command's list." );
+                    if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
+                        ListCommands();
+                    Console.WriteLine( "Press enter for continue." ); Console.ReadLine();
+                }
+                Console.WriteLine( $"Merchant account settings: {Environment.NewLine}\tMerchantName={_merchantKey}{Environment.NewLine}\tMerchantPassword={_merchantPassword}{Environment.NewLine}\tHOST={_host}{Environment.NewLine}" );
+                Console.WriteLine( "Press space for change Merchant account settings" );
+                if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
+                {
+                    ChangeMerchant();
+                }
+
+                while ( true )
+                {
+                    Console.WriteLine( $"{Environment.NewLine}Press backspase for exit" );
+                    if ( Console.ReadKey().Key == ConsoleKey.Backspace )
+                        break;
+                    Router();
+                }
+
+                Console.ReadLine();
+            }
+            catch ( Exception ex )
+            {
+                Console.WriteLine( $"Error occurs: {ex.Message}{Environment.NewLine}{ex.StackTrace}" );
+            }
         }
         
         static void WriteResult(PaytureResponse response)
         {
-            Console.WriteLine( $"{Environment.NewLine}Response Result{Environment.NewLine}{response.APIName} Success={response.Success}; Attribute=[{response.Attributes.Aggregate( "", ( a, c ) => a += $"{c.Key}={c.Value}; " )}]" );
+            if( response != null )
+                Console.WriteLine( $"{Environment.NewLine}Response Result{Environment.NewLine}{response.APIName} Success={response.Success}; Attribute=[{response.Attributes.Aggregate( "", ( a, c ) => a += $"{c.Key}={c.Value}; " )}]" );
         }
         
 
