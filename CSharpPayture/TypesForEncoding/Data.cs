@@ -19,12 +19,8 @@ namespace CSharpPayture
         public string ConfirmCode  { get; set; }
         public string CustomFields  { get; set; }
         
-        public Data(SessionType sessionType, string orderId, long amount, string ip, string product, Int64? total, string url, string template, string lang )
+        public Data(SessionType sessionType, string orderId, long amount, string ip, string product, Int64? total, string url, string template, string lang ) : this( sessionType, orderId, amount, ip )
         {
-            SessionType = (sessionType == CSharpPayture.SessionType.None)  ? null : sessionType.ToString();
-            OrderId = orderId;
-            Amount = amount;
-            IP = ip;
             TemplateTag = template;
             Language = lang;
             Url = url;
@@ -44,6 +40,13 @@ namespace CSharpPayture
             CustomFields = ( customFields == null ? null : resultStr );
         }
         
+        public Data( SessionType sessionType, string orderId, long amount, string ip )
+        {
+            SessionType = ( sessionType == CSharpPayture.SessionType.None )  ? null : sessionType.ToString();
+            OrderId = orderId;
+            Amount = amount;
+            IP = ip;
+        }
         public Data(){}
 }
 }

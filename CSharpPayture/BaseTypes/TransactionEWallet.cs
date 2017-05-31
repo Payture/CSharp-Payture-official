@@ -21,10 +21,8 @@ namespace CSharpPayture
         {
             if ( customer == null || card == null )
                 return this;
-            _requestKeyValuePair.Add( PaytureParams.DATA, customer.GetPropertiesString() + card.GetPropertiesString() );
-            ExpandTransaction();
-            _expanded = true;
-            return this;
+            var str = customer.GetPropertiesString() + card.GetPropertiesString();
+            return ExpandInternal( PaytureParams.DATA, str );
         }
 
         /// <summary>
@@ -36,57 +34,62 @@ namespace CSharpPayture
         {
             if ( _expanded )
                 return this;
+            var str = "";
             if ( Command == PaytureCommands.Delete )
-                _requestKeyValuePair.Add( PaytureParams.DATA, $"{PaytureParams.VWUserLgn}={customer.VWUserLgn};{PaytureParams.Password}={_merchant.Password}" );
+                str = $"{PaytureParams.VWUserLgn}={customer.VWUserLgn};{PaytureParams.Password}={_merchant.Password}";
             else
-                _requestKeyValuePair.Add( PaytureParams.DATA, customer.GetPropertiesString() );
-            ExpandTransaction();
-            _expanded = true;
-            return this;
+                str = customer.GetPropertiesString();
+            return ExpandInternal( PaytureParams.DATA, str );
         }
 
         /// <summary>
-        /// Expand transaction for EWallet Methods: Init/Pay (Merchant side reg/noreg card) 
+        /// Expand transaction for EWallet Methods: Pay (Merchant side for NOT REGISTERED card)
         /// </summary>
         /// <param name="customer">Customer object.</param>
-        /// <param name="card">Card object. Specify in it:  CardId field for Init command; CardId and SecureCode for Pay on Merchant side(REGISTERED card); All fields exclude CardId for Pay on Merchant side(NO REGISTERED card).</param>
-        /// <param name="data">Data object. SessionType and IP fields are required; Optional for Init: TamplateTag and Language; Optional fo Pay: ConfimCode and CustomFields.</param>
-        /// <param name="regCard">Pass false in case Pay on Merchant side for NO REGISTERED CARD.</param>
+        /// <param name="card">Card object. Specify in it all fields exclude CardId.</param>
+        /// <param name="data">Data object. SessionType and IP fields are required. Optional ConfimCode and CustomFields.</param>
         /// <returns>current expanded transaction</returns>
-        public Transaction ExpandTransaction( Customer customer, Card card, Data data, bool regCard = true ) 
+        public Transaction ExpandTransaction( Customer customer, Card card, Data data ) 
         {
             if ( customer == null || card == null || data == null )
                 return this;
             _sessionType = ( SessionType )Enum.Parse( typeof( SessionType ), data.SessionType );
-            var newCustom = new Customer( customer.VWUserLgn, customer.VWUserPsw );
-            var newData = new Data {SessionType = data.SessionType, OrderId = data.OrderId, Amount = data.Amount, IP = data.IP, ConfirmCode = data.ConfirmCode };
-            var newCard = new Card();
-            if ( regCard )
-            {
-                newCard = new Card { SecureCode = card.SecureCode, CardId = card.CardId };
-            }
-            else
-            {
-                card.CardId = "FreePay";
-            }
-            if(Command == PaytureCommands.Init)
-            {
-                newCustom.PhoneNumber = customer.PhoneNumber;
-                newCustom.Email = customer.Email;
-                newData = new Data { SessionType = data.SessionType, IP = data.IP, TemplateTag = data.TemplateTag, Language = data.Language, Amount = data.Amount };
-                if( data.SessionType != SessionType.Add.ToString() )
-                {
-                    newCard = new Card { CardId = card.CardId };
-                    newData.OrderId = data.OrderId;
-                }
 
-            }
-            var str = newCustom.GetPropertiesString() + card.GetPropertiesString() + newData.GetPropertiesString() + data.CustomFields;
-            _requestKeyValuePair.Add( PaytureParams.DATA, str );
+            card.CardId = "FreePay";
+            var str = customer.GetPropertiesString() + card.GetPropertiesString() + data.GetPropertiesString() + data.CustomFields;
+            return ExpandInternal( PaytureParams.DATA, str );
+        }
 
-            ExpandTransaction();
-            _expanded = true;
-            return this;
+        /// <summary>
+        /// Expand transaction for EWallet Methods: Pay (Merchant side for REGISTERED card) 
+        /// </summary>
+        /// <param name="customer">Customer object.</param>
+        /// <param name="cardId">CardId identifier in Payture system.</param>
+        /// <param name="secureCode">CVC2/CVV2.</param>
+        /// <param name="data">Data object. SessionType and IP fields are required. Optional  ConfimCode and CustomFields.</param>
+        /// <returns>current expanded transaction</returns>
+        public Transaction ExpandTransaction( Customer customer, string cardId, int secureCode, Data data ) 
+        {
+            if ( customer == null || String.IsNullOrEmpty(cardId) || data == null )
+                return this;
+            _sessionType = ( SessionType )Enum.Parse( typeof( SessionType ), data.SessionType );
+            var str = customer.GetPropertiesString() + $"{PaytureParams.CardId}={cardId};" + $"{PaytureParams.SecureCode}={secureCode};" +  data.GetPropertiesString()  + data.CustomFields;
+            return ExpandInternal( PaytureParams.DATA, str );
+        }
+        /// <summary>
+        /// Expand transaction for EWallet Methods: Init
+        /// </summary>
+        /// <param name="customer">Customer object.</param>
+        /// <param name="cardId">CardId identifier in Payture system.</param>
+        /// <param name="data">Data object. SessionType and IP fields are required; Optional TamplateTag and Language.</param>
+        /// <returns>current expanded transaction</returns>
+        public Transaction ExpandTransaction( Customer customer, string cardId, Data data ) 
+        {
+            if ( customer == null || cardId == null || data == null )
+                return this;
+            _sessionType = ( SessionType )Enum.Parse( typeof( SessionType ), data.SessionType );
+            var str = customer.GetPropertiesString() + $"CardId={cardId};" + data.GetPropertiesString() + data.CustomFields;
+            return ExpandInternal( PaytureParams.DATA, str );
         }
 
         /// <summary>
@@ -101,13 +104,10 @@ namespace CSharpPayture
         {
             if ( customer == null || String.IsNullOrEmpty( cardId ) )
                 return this;
-
-            _requestKeyValuePair.Add( PaytureParams.DATA, customer.GetPropertiesString() + $"{PaytureParams.CardId}={cardId};"  
-                + ( amount.HasValue && Command == PaytureCommands.Activate ?  $"{PaytureParams.Amount}={amount};" : "" ) + (orderId == null ? "" : $"{PaytureParams.OrderId}={orderId};"));
-
-            ExpandTransaction();
-            _expanded = true;
-            return this;
+            
+            var str = customer.GetPropertiesString() + $"{PaytureParams.CardId}={cardId};"
+                + ( amount.HasValue && Command == PaytureCommands.Activate ? $"{PaytureParams.Amount}={amount};" : "" ) + ( orderId == null ? "" : $"{PaytureParams.OrderId}={orderId};" );
+            return ExpandInternal( PaytureParams.DATA, str );
         }
 
         /// <summary>
@@ -134,6 +134,14 @@ namespace CSharpPayture
         {
             _requestKeyValuePair.Add( PaytureParams.MD, MD );
             _requestKeyValuePair.Add( PaytureParams.PaRes, paRes );
+            _expanded = true;
+            return this;
+        }
+
+        private Transaction ExpandInternal( PaytureParams field, string data )
+        {
+            _requestKeyValuePair.Add( field, data );
+            ExpandTransaction();
             _expanded = true;
             return this;
         }
