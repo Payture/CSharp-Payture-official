@@ -15,7 +15,7 @@ namespace CSharpPayture
         /// <summary>
         /// Expand transaction for InPay Methods: Init
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">Data object. SessionType and IP are required; Url, TemplateTag and Language are optional.</param>
         /// <returns>current expanded transaction</returns>
         public Transaction ExpandTransaction( Data data )
         {
@@ -31,8 +31,7 @@ namespace CSharpPayture
         /// <summary>
         /// Expand transaction for InPay  Methods: Pay
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="amount"></param>
+        /// <param name="sessionId">Payment's identifier from Init response.</param>
         /// <returns>current expanded transaction</returns>
         public Transaction ExpandTransaction( string sessionId )
         {

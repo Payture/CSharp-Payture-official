@@ -27,11 +27,10 @@ namespace CSharpPayture
 
         /// <summary>
         /// Expand transaction for API Methods: Charge/UnBlock/Refund/GetState  
-        /// for Ewallet Methods: Charge/UnBlock/Refund/PayStatus  
-        /// for Inpay Methods: Charge/UnBlock/Refund/PayStatus
+        /// for Ewallet and InPay Methods: Charge/UnBlock/Refund/PayStatus  
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="amount"></param>
+        /// <param name="orderId">Payment's identifier in Merchant system</param>
+        /// <param name="amount">Payment's amount in kopec. Pass null for PayStatus and GetState commands</param>
         /// <returns></returns>
         public Transaction ExpandTransaction( string orderId, Int64? amount )
         {
@@ -69,7 +68,8 @@ namespace CSharpPayture
         /// <summary>
         /// Expand transaction with Merchant key and password
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="addKey">Pass false if Merchant key IS NOT NEEDED.</param>
+        /// <param name="addPass">Pass true if Merchant password IS NEEDED.</param>
         /// <returns>return current expanded transaction</returns>
         protected Transaction ExpandTransaction( bool addKey = true, bool addPass = false )
         {
@@ -107,7 +107,7 @@ namespace CSharpPayture
         /// <summary>
         /// Process request to Payture server synchronously
         /// </summary>
-        /// <returns>PaytureResponse - response from the Payture server. In case of exeption will be return PaytureResponse with exeption mesage in ErrCode field</returns>
+        /// <returns>PaytureResponse - response from the Payture server. In case of exeption will be return PaytureResponse with exeption mesage in ErrCode field.</returns>
         public PaytureResponse ProcessOperation()
         {
             if ( !_expanded )
@@ -142,7 +142,7 @@ namespace CSharpPayture
         /// <summary>
         /// Form url for request
         /// </summary>
-        /// <returns>url string</returns>
+        /// <returns>url string.</returns>
         protected string GetPath()
         {
             return $"{_merchant.HOST}/{_apiType}/{Command}";

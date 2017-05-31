@@ -38,5 +38,20 @@ namespace CSharpPayture
             _expanded = true;
             return this;
         }
+
+         /// <summary>
+        /// Expand transaction for 3DS Methods: Pay3DS/Block3DS
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <param name="paRes"></param>
+        /// <returns>current expanded transaction</returns>
+        public Transaction ExpandTransaction( string orderId, string paRes )
+        {
+            _requestKeyValuePair.Add( PaytureParams.OrderId, orderId );
+            _requestKeyValuePair.Add( PaytureParams.PaRes, paRes );
+            ExpandTransaction();
+            _expanded = true;
+            return this;
+        }
     }
 }
