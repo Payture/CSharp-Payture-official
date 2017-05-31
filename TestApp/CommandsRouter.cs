@@ -43,85 +43,122 @@ namespace TestApp
         };
 
 
-        #region NEW Router
+        #region Simple promts methods
+        static PaytureAPIType PromtService()
+        {
+            Console.WriteLine( "Type the service api type: api, ewallet or inpay:" );
+            var service = Console.ReadLine().ToUpper();
+            if ( service == "EWALLET" || service == "E" )
+                return PaytureAPIType.vwapi;
+            else if ( service == "INPAY" || service == "I" )
+                return PaytureAPIType.apim;
+            else if ( service == "API" || service == "A" )
+                return PaytureAPIType.api;
+            else
+            {
+                Console.WriteLine( "Illegal service. Only API, EWALLET or INPAY avaliable." );
+                PromtService();
+                throw new Exception();
+            }
+        }
+
+        static SessionType PromtSessionType()
+        {
+            Console.WriteLine( "Specify The Session Type: pay, block or for ewallet only - add:)" );
+            var session = Console.ReadLine().ToUpper();
+            if ( session == "PAY" || session == "P" )
+                return SessionType.Pay;
+            else if ( session == "BLOCK" || session == "B" )
+                return SessionType.Block;
+            else if ( session == "ADD" || session == "A" )
+                return SessionType.Add;
+            else
+            {
+                Console.WriteLine( "Illegal Session Type. Only pay, block or add avaliable." );
+                PromtSessionType();
+                throw new Exception();
+            }
+        }
+
+        static bool PromtForUseRegCard()
+        {
+            Console.WriteLine( "Use registered card?  Note: type yes/no or y/n:" );
+            var regCard = Console.ReadLine().ToUpper();
+            if ( regCard == "YES" || regCard == "Y" )
+                return true;
+            else if ( regCard == "NO" || regCard == "N" )
+                return false;
+            else
+            {
+                Console.WriteLine( "Illegal input. Type yes/no or y/n for specify necessity of using registered card." );
+                PromtForUseRegCard();
+                throw new Exception();
+            }
+        }
+
+
+        static bool PromtForUseSessionId( PaytureCommands command )
+        {
+            Console.WriteLine( $"Use SessionId for {command} command?  Note: type yes/no or y/n:" );
+            var useSessionId = Console.ReadLine().ToUpper();
+            if ( useSessionId == "YES" || useSessionId == "Y" )
+                return true;
+            else if ( useSessionId == "NO" || useSessionId == "N" )
+                return false;
+            else
+            {
+                Console.WriteLine( $"Illegal input. Type yes/no or y/n for specify necessity of using SessionId in {command} operation." );
+                PromtForUseRegCard();
+                throw new Exception();
+            }
+        }
+        #endregion Simple promts methods
+
+
+        #region Router
         public static void Router ( )
         {
             Console.WriteLine( "Type the command:" );
-            var command = Console.ReadLine().ToUpper().Split(' ');
-            if ( command.Count() < 1)
-                return;
-            var apiType = PaytureAPIType.api;//api type
-            var sessionType = "";
-            var transactionSide = "";
-            var regOrNoRegCard = "";
-            var cmd = command[ 0 ];  //main command
-            if ( !new[] { "FIELDS", "COMMANDS", "CHANGEFIELDS", "HELP", "CHANGEMERCHANT" }.Contains( cmd ) )
-            {
-                var api = command[ 1 ];
-                if(api == "EWALLET")
-                    apiType = PaytureAPIType.vwapi;
-                else if(api =="INPAY")
-                    apiType = PaytureAPIType.apim;
-            }
-            if ( command.Count() > 2 )
-            {
-                if ( new[] { "I", "INIT","P", "PAY" }.Contains( cmd ) )
-                {
-                    sessionType = command.ElementAt( 2 ).ToUpper().Substring( 0, 1 ); //session type
-                    if ( ( cmd == "PAY" || cmd == "P" ) && command.Count() >= 3 && apiType == PaytureAPIType.vwapi )
-                    {
-                        transactionSide = command.ElementAt( 3 ).ToUpper().Substring( 0, 1 );
-                        if(transactionSide == "M" && command.Count() > 3)
-                            regOrNoRegCard = command.ElementAt( 4 ).ToUpper().Substring( 0, 1 );
-                    }
-                    else if(cmd == "INIT" || cmd == "I")
-                        { }
-                    else return;
-                }
-                else if(cmd == "ADD")
-                    transactionSide = command.ElementAt( 2 ).ToUpper().Substring( 0, 1 );
-            }
-            
+            var cmd = Console.ReadLine().ToUpper();
+            var apiType = PaytureAPIType.api;
             switch ( cmd )
             {
                 case "PAY":
                     {
+                        apiType = PromtService();
                         if ( apiType == PaytureAPIType.api )
                         {
                             APIPayOrBlock( PaytureCommands.Pay );
                             break;
                         }
-                        switch( transactionSide )
+                        
+                        if( PromtForUseSessionId( PaytureCommands.Pay ) )
                         {
-                            case "P":
-                                {
-                                    PayturePayOrAdd( PaytureCommands.Pay );
-                                    break;
-                                }
-                            case "M":
-                                {
-                                    var customer = GetCustomer();
-                                    var data = DataForInit(sessionType == "P" ? SessionType.Pay : SessionType.Block);          
-                                    
-                                    if(regOrNoRegCard != "R")
-                                    {
-                                        var card = GetCard();
-                                        response = _merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction(customer, card, data, false).ProcessOperation();
-                                        break;
-
-                                    }
-
-                                    var cardId = allFields[ PaytureParams.CardId ];
-                                    var secureCode = allFields[ PaytureParams.SecureCode ];
-                                    Console.WriteLine( $"CardId={cardId}; SecureCode={secureCode};" );
-                                    CircleChanges( "CardId and SecureCode" );
-
-                                    response = _merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction(customer, new Card { CardId = allFields[ PaytureParams.CardId ],
-                                        SecureCode = int.Parse(allFields[ PaytureParams.SecureCode ]) }, data).ProcessOperation();
-
-                                    break;
-                                }
+                            PayturePayOrAdd( PaytureCommands.Pay );
+                            break;
                         }
+
+                        //Only EWallet here
+                        var customer = GetCustomer();
+                        var data = DataForInit( PromtSessionType() );
+
+                        var regCard = PromtForUseRegCard();
+                        if( !regCard )
+                        {
+                            var card = GetCard();
+                            response = _merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, card, data, false ).ProcessOperation();
+                            break;
+
+                        }
+
+                        var cardId = allFields[ PaytureParams.CardId ];
+                        var secureCode = allFields[ PaytureParams.SecureCode ];
+                        Console.WriteLine( $"CardId={cardId}; SecureCode={secureCode};" );
+                        CircleChanges( "CardId and SecureCode" );
+
+                        response = _merchant.EWallet( PaytureCommands.Pay )
+                                            .ExpandTransaction(customer, new Card { CardId = allFields[ PaytureParams.CardId ], SecureCode = int.Parse(allFields[ PaytureParams.SecureCode ]) },  data)
+                                            .ProcessOperation();
                         break;
                     }
                 case "BLOCK":
@@ -131,33 +168,35 @@ namespace TestApp
                     }
                 case "CHARGE":
                     {
-                        ChargeUnblockRefundGetState( PaytureCommands.Charge, apiType );
+                        ChargeUnblockRefundGetState(  PaytureCommands.Charge );
                         break;
                     }
                 case "REFUND":
                     {
-                        ChargeUnblockRefundGetState(  PaytureCommands.Refund, apiType );
+                        ChargeUnblockRefundGetState(  PaytureCommands.Refund );
                         break;
                     }
                 case "UNBLOCK":
                     {
-                        ChargeUnblockRefundGetState(  PaytureCommands.Unblock, apiType );
+                        ChargeUnblockRefundGetState(  PaytureCommands.Unblock );
                         break;
                     }
                 case "GETSTATE":
                     {
-                        ChargeUnblockRefundGetState(  PaytureCommands.GetState, apiType );
+                        ChargeUnblockRefundGetState(  PaytureCommands.GetState );
                         break;
                     }
                 case "PAYSTATUS":
                     {
-                        ChargeUnblockRefundGetState(  PaytureCommands.PayStatus, apiType );
+                        ChargeUnblockRefundGetState(  PaytureCommands.PayStatus );
                         break;
                     }
                 case "INIT":
                     {
-                        var data = DataForInit(sessionType == "P" ? SessionType.Pay : sessionType == "B"? SessionType.Block : SessionType.Add);
+                        apiType = PromtService();
 
+                        var sessionType = PromtSessionType();
+                        var data = DataForInit( sessionType );
 
                         if ( apiType == PaytureAPIType.vwapi )
                         {
@@ -207,22 +246,17 @@ namespace TestApp
                     }
                  case "ADD":
                     {
-                        switch(transactionSide)
+                        if ( PromtForUseSessionId( PaytureCommands.Add ) )
                         {
-                            case "P":
-                                {
-                                    PayturePayOrAdd( PaytureCommands.Add );
-                                    break;
-                                }
-                            case "M":
-                                {
-                                    var customer = GetCustomer();
-                                    var card = GetCard();
-
-                                    response = _merchant.EWallet( PaytureCommands.Add ).ExpandTransaction(customer, card).ProcessOperation();    
-                                    break;
-                                }
+                            PayturePayOrAdd( PaytureCommands.Add );
+                            break;
                         }
+
+                        //EWallet add card on Merchant side
+                        var customer = GetCustomer();
+                        var card = GetCard();
+
+                        response = _merchant.EWallet( PaytureCommands.Add ).ExpandTransaction(customer, card).ProcessOperation();  
                         break;
                     }
                 case "FIELDS":
@@ -251,7 +285,10 @@ namespace TestApp
                 WriteResult( response );
 
         }
-        #endregion NEW Router
+        #endregion Router
+
+
+
         static void GenerateOrderId()
         {
             allFields[ PaytureParams.OrderId ] = $"ORD_{Random.Next( 0, int.MaxValue )}_TEST";
@@ -302,14 +339,17 @@ namespace TestApp
         
         static Data DataFromCurrentSettings()
         {
-            return  new Data
+            allFields[ PaytureParams.Total ] = allFields[ PaytureParams.Amount ];
+            return new Data
             {
-                Amount = allFields[ PaytureParams.Amount ] == null ? null : (long?) long.Parse( allFields[ PaytureParams.Amount ] ),
+                Amount = allFields[ PaytureParams.Amount ] == null ? null : (long?)long.Parse( allFields[ PaytureParams.Amount ] ),
                 IP = allFields[ PaytureParams.IP ],
                 Language = allFields[ PaytureParams.Language ],
                 OrderId = allFields[ PaytureParams.OrderId ],
                 SessionType = allFields[ PaytureParams.SessionType ],
-                TemplateTag = allFields[ PaytureParams.TemplateTag ]
+                TemplateTag = allFields[ PaytureParams.TemplateTag ],
+                Total = allFields[ PaytureParams.Amount ] == null ? null : (long?)long.Parse( allFields[ PaytureParams.Amount ] ),
+                Product = allFields[ PaytureParams.Product ]
             };
         }
 
@@ -348,8 +388,9 @@ namespace TestApp
 
             return CustomerFromCurrentSettings();
         }
-        private static void  ChargeUnblockRefundGetState( PaytureCommands command, PaytureAPIType api )
+        private static void  ChargeUnblockRefundGetState( PaytureCommands command )
         {
+            var api = PromtService();
             Transaction trans;
             var orderId = allFields[PaytureParams.OrderId];
             var amount = allFields[ PaytureParams.Amount ] == null ? null : (long?) long.Parse( allFields[ PaytureParams.Amount ] );
@@ -377,8 +418,7 @@ namespace TestApp
             CircleChanges();
             return DataFromCurrentSettings();
         }
-
-        #region Router
+        
 
         static void CircleChanges(string message = "default settings")
         {
@@ -430,22 +470,22 @@ namespace TestApp
                     "\tchangemerchant\t\t- commands for changing current merchant account settings.\n" +
                     "\thelp\t\t- commands that types this text (description of commands that you can use in this console program.).\n\n");
             Console.WriteLine("Commands for invoke PaytureAPI functions.\n" +
-                    "\tpay\t-\n" +
-                    "\tblock\t- only for api\n" + 
-                    "\tcharge\t-\n" + 
-                    "\tunblock\t-\n" +
-                    "\trefund\t-\n" + 
-                    "\tgetsstate\t- only for api\n" +
-                    "\tpaystatus\t- for vwapi and apim\n" + 
-                    "\tinit\t-\n" + 
-                    "\tregister\t-\n" +
-                    "\tcheck\t-\n" + 
-                    "\tupdate\t-\n" + 
-                    "\tdelete\t-\n" +
-                    "\tadd\t-\n" +
-                    "\tactivate\t-\n" +   
-                    "\tsendcode\t-\n" +
-                    "\tremove\t-\n"  );
+                    "\tpay\t- use for one-stage payment. In EWALLET an INPAY api this command can be use for block funds - if you specify SessionType=Block.\n" +
+                    "\tblock\t- use for block funds on Customer card. After that command the funds can be charged by Charge command or unblocked by Unblock command. This command use only for API.\n" + 
+                    "\tcharge\t- write-off of funds from customer card.\n" + 
+                    "\tunblock\t- unlocking of funds on customer card.\n" +
+                    "\trefund\t- operation for refunds.\n" + 
+                    "\tgetsstate\t- use for getting the actual state of payments in Payture processing system. This command use only for API.\n" +
+                    "\tpaystatus\t- use for getting the actual state of payments in Payture processing system. This command use for EWALLET and INPAY.\n" + 
+                    "\tinit\t- use for payment initialization, customer will be redirected on Payture payment gateway page for enter card's information.\n" + 
+                    "\tregister\t- register new customer. This command use only for EWALLET.\n" +
+                    "\tcheck\t- check for existing customer account in Payture system. This command use only for EWALLET.\n" + 
+                    "\tupdate\t- This command use only for EWALLET.\n" + 
+                    "\tdelete\t- delete customer account from Payture system. This command use only for EWALLET.\n" +
+                    "\tadd\t- register new card in Payture system. This command use only for EWALLET.\n" +
+                    "\tactivate\t- activate registered card in Payture system. This command use only for EWALLET.\n" +   
+                    "\tsendcode\t- provide additional authentication for customer payment. This command use only for EWALLET.\n" +
+                    "\tremove\t- delete card from Payture system. This command use only for EWALLET.\n"  );
         }
 
 
@@ -461,8 +501,7 @@ namespace TestApp
             CircleChanges();
             response = _merchant.Api( command ).ExpandTransaction( payInfo, null, (string)allFields[PaytureParams.CustomerKey], (string)allFields[PaytureParams.PaytureId] ).ProcessOperation();
         }
-
-        #endregion Router
+        
 
         static void ChangeMerchant()
         {
@@ -479,10 +518,7 @@ namespace TestApp
         static void Help()
         {
             Console.WriteLine("Then console promt you 'Type command' - you can type commands for invoke PaytureAPI functions and you can types commands for help.");
-            Console.WriteLine("The structure of commands for invoke PaytureAPI functions:\n\t=>Fist keyword is one of avaliable command for PaytureAPI (like pay, block for example);\n");
-            Console.WriteLine("\t=>For second keyword you must state the api type, one of following:\n\t\tapi - for PaytureAPI\n\t\tinpay - for PaytureInPay\n\t\tewallet - for PaytureEWallet\n\t\tapple - for PaytureApplePay\n\t\tandroid - for PaytureAndroidPay\n");
-            Console.WriteLine("\t=>Third keyword is needed for specify:\n\t\tSessionType in 'init' command (can be 'pay', 'block', 'add').");
-            Console.WriteLine("\t=>Fourth keyword used for specify transaction side for 'pay' ");
+            Console.WriteLine("After you type the command an appropriate method will be execute. If the data is not enough for execute the program promt for additional input.");
             Console.WriteLine("See commands description:\n\n");
             ListCommands();
         }
