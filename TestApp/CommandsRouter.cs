@@ -280,6 +280,11 @@ namespace TestApp
                         ChangeMerchant();
                         break;
                     }
+                case "HELP":
+                    {
+                        Help();
+                        break;
+                    }
             }
             if ( !new[] { "FIELDS", "CHANGEFIELDS", "COMMANDS", "CHANGEMERCHANT", "HELP" }.Contains( cmd ) )
                 WriteResult( response );
@@ -463,29 +468,29 @@ namespace TestApp
 
         public static void ListCommands()
         {
-            Console.WriteLine("Commands for help:\n" + 
-                    "\tfields\t\t- list current key-value pairs that used in request to Payture server.\n" +
-                    "\tchangefields\t\t- command for changing current values of  key-value pairs that used in request to Payture server.\n" + 
-                    "\tcommands\t\t- list avaliable commands for this console program.\n" + 
-                    "\tchangemerchant\t\t- commands for changing current merchant account settings.\n" +
-                    "\thelp\t\t- commands that types this text (description of commands that you can use in this console program.).\n\n");
-            Console.WriteLine("Commands for invoke PaytureAPI functions.\n" +
-                    "\tpay\t- use for one-stage payment. In EWALLET an INPAY api this command can be use for block funds - if you specify SessionType=Block.\n" +
-                    "\tblock\t- use for block funds on Customer card. After that command the funds can be charged by Charge command or unblocked by Unblock command. This command use only for API.\n" + 
-                    "\tcharge\t- write-off of funds from customer card.\n" + 
-                    "\tunblock\t- unlocking of funds on customer card.\n" +
-                    "\trefund\t- operation for refunds.\n" + 
-                    "\tgetsstate\t- use for getting the actual state of payments in Payture processing system. This command use only for API.\n" +
-                    "\tpaystatus\t- use for getting the actual state of payments in Payture processing system. This command use for EWALLET and INPAY.\n" + 
-                    "\tinit\t- use for payment initialization, customer will be redirected on Payture payment gateway page for enter card's information.\n" + 
-                    "\tregister\t- register new customer. This command use only for EWALLET.\n" +
-                    "\tcheck\t- check for existing customer account in Payture system. This command use only for EWALLET.\n" + 
-                    "\tupdate\t- This command use only for EWALLET.\n" + 
-                    "\tdelete\t- delete customer account from Payture system. This command use only for EWALLET.\n" +
-                    "\tadd\t- register new card in Payture system. This command use only for EWALLET.\n" +
-                    "\tactivate\t- activate registered card in Payture system. This command use only for EWALLET.\n" +   
-                    "\tsendcode\t- provide additional authentication for customer payment. This command use only for EWALLET.\n" +
-                    "\tremove\t- delete card from Payture system. This command use only for EWALLET.\n"  );
+            Console.WriteLine("Commands for help:{0}{0}" + 
+                    "* fields - list current key-value pairs that used in request to Payture server.{0}{0}" +
+                    "* changefields - command for changing current values of  key-value pairs that used in request to Payture server.{0}{0}" + 
+                    "* commands - list avaliable commands for this console program.{0}{0}" + 
+                    "* changemerchant - commands for changing current merchant account settings.{0}{0}" +
+                    "* help - commands that types this text (description of commands that you can use in this console program.).{0}{0}{0}", Environment.NewLine);
+            Console.WriteLine("Commands for invoke PaytureAPI functions.{0}" +
+                    "* pay - use for one-stage payment. In EWALLET an INPAY api this command can be use for block funds - if you specify SessionType=Block.{0}{0}" +
+                    "* block - use for block funds on Customer card. After that command the funds can be charged by Charge command or unblocked by Unblock command. This command use only for API.{0}{0}" + 
+                    "* charge - write-off of funds from customer card.{0}{0}" + 
+                    "* unblock - unlocking of funds on customer card.{0}{0}" +
+                    "* refund - operation for refunds.{0}{0}" + 
+                    "* getsstate - use for getting the actual state of payments in Payture processing system. This command use only for API.{0}{0}" +
+                    "* paystatus - use for getting the actual state of payments in Payture processing system. This command use for EWALLET and INPAY.{0}{0}" + 
+                    "* init - use for payment initialization, customer will be redirected on Payture payment gateway page for enter card's information.{0}{0}" + 
+                    "* register - register new customer. This command use only for EWALLET.{0}{0}" +
+                    "* check - check for existing customer account in Payture system. This command use only for EWALLET.{0}{0}" + 
+                    "* update - This command use only for EWALLET.{0}{0}" + 
+                    "* delete - delete customer account from Payture system. This command use only for EWALLET.{0}{0}" +
+                    "* add - register new card in Payture system. This command use only for EWALLET.{0}{0}" +
+                    "* activate - activate registered card in Payture system. This command use only for EWALLET.{0}{0}" +   
+                    "* sendcode - provide additional authentication for customer payment. This command use only for EWALLET.{0}{0}" +
+                    "* remove - delete card from Payture system. This command use only for EWALLET.{0}{0}", Environment.NewLine  );
         }
 
 
@@ -517,10 +522,8 @@ namespace TestApp
 
         static void Help()
         {
-            Console.WriteLine("Then console promt you 'Type command' - you can type commands for invoke PaytureAPI functions and you can types commands for help.");
+            Console.WriteLine("\n\nThen console promt you 'Type command' - you can type commands for invoke PaytureAPI functions and you can types commands for help.");
             Console.WriteLine("After you type the command an appropriate method will be execute. If the data is not enough for execute the program promt for additional input.");
-            Console.WriteLine("See commands description:\n\n");
-            ListCommands();
         }
     }
 }
