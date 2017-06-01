@@ -157,6 +157,11 @@ var data = new Data( SessionType.Pay, orderId, amount, ip );
 //Expand transaction
 merchant.InPay( PaytureCommands.Init ).ExpandTransaction( data );
 ```
+> Please note that the response from Init method will be contain SessionId - the unique payment's identifier - further you need to use it in PaytureCommands.Pay  api method for proseccing transaction on Payture side: call manually (suppose, we're have sessionId value from Init):
+*  merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( sessionId ) - use for SessionType=Pay or SessionType=Block
+
+> To do the same thing you can take value from response's RedirectURL property - which is string representation of Url constracted for you (a value in RedirectURL will be set only in PaytureCommands.Init response, in over cases it has null value)  - and just redirect customer to this address.
+
 
 ### ExpandTransaction Methods for PaytureEWallet
 #### ExpandTransaction( Customer customer, string cardId, Data data ) 
@@ -201,6 +206,12 @@ var data = new Data
 //Expand transaction
 merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, null, data ); // SessionType=Add
 ```
+
+> Please note that the response from Init method will be contain SessionId - the unique payment's identifier - further you need to use it in PaytureCommands.Pay or PaytureCommands.Add api methods for proseccing transaction on Payture side: call manually (suppose, we're have sessionId value from Init):
+*  merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( sessionId ); - use for SessionType=Pay or SessionType=Block
+*  merchant.EWallet( PaytureCommands.Add ).ExpandTransaction( sessionId ); - use for SessionType=Add 
+
+> To do the same thing you can take value from response's RedirectURL property - which is string representation of Url constracted for you (a value in RedirectURL will be set only in PaytureCommands.Init response, in over cases it has null value)  - and just redirect customer to this address.
 
 #### ExpandTransaction( Customer customer, string cardId, int secureCode, Data data ) 
 This overload you call for api 
