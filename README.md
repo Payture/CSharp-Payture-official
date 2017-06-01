@@ -1,4 +1,4 @@
-# CSharp-Payture-official
+# <span style="color:red">CSharp-Payture-official</span>
 
 This is Offical Payture API for C#. We're try to make this as simple as possible for you! Explore tutorial and get started. Please note, you will need a Merchant account,  contact our support to get one. 
 Here you can explore how to use our API functions!
@@ -39,7 +39,7 @@ Now, let's walk through the steps from the picture above
 
 
 
-## First Step - Creating Merchant Account <a id="newMerchant" style="color:red"></a>
+## First Step - Creating Merchant Account <a id="newMerchant" ></a>
 To get access for API usage just create the instance of Merchant object, pass in the constructor the name of the host, name of your account and your account password.  Suppose that you have Merchant account with  name: Key = "MyMerchantAccount" and password Password = "MyPassword".
 
 Pass the 'https://sandbox.payture.com' for test as the name of Host (first parameter).
@@ -51,7 +51,7 @@ We're completed the first step! Go next!
 Please note, that  Key = "'MyMerchantAccount" and Password = "MyMerchantAccount"  - fake, [our support](http://payture.com/kontakty/) help you to get one!
 ***
 
-## Second Step - Get access to required API <a id="accessToAPI" style="color:red"></a>
+## Second Step - Get access to required API <a id="accessToAPI" ></a>
 At this step you just call one of following methods on Merchant object (which provide proper API type for you) and pass in the PaytureCommands [see description here](#PaytureCommands): 
 * Api (this is PaytureAPI)
 ```c#
@@ -79,7 +79,7 @@ Result of this methods is the instanse of Transaction object which you expand in
 
  [See this table](#PaytureCommandsTable) for explore what PaytureCommands received  theese methods.
 
-## Third Step - Expand transaction <a id="extpandTransaction" style="color:red"></a>
+## Third Step - Expand transaction <a id="extpandTransaction" ></a>
 This is the most difficult step, but you can do it!
 In the previous step we get the Transaction object [see here that is it](#Transaction). You need expand it, below you find detailed description how do this for every type of api.
 
@@ -382,7 +382,7 @@ Description of provided params.
 
 
 
-## Last Step - Send request <a id="sendRequest" style="color:red"></a>
+## Last Step - Send request <a id="sendRequest" ></a>
 After transaction is expanded you can send request to the Payture server via one of two methods:
 * ProcessOperation(); - this is sync method. The executed thread will be block while waiting response from the server - return the PaytureResponse object
 * ProcessOperationAsync(); - this async method, return Task<PaytureResponse> object;
