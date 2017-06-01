@@ -1,4 +1,4 @@
-# <span style="color:red">CSharp-Payture-official</span>
+# CSharp-Payture-official
 
 This is Offical Payture API for C#. We're try to make this as simple as possible for you! Explore tutorial and get started. Please note, you will need a Merchant account,  contact our support to get one. 
 Here you can explore how to use our API functions!
@@ -100,6 +100,23 @@ Call this for following PaytureCommands:
 | amount           | Amount of payment kopec. (in case of GetState or PayStatus pass null)                                          |
 
 
+Example for Charge:
+
+> Note Charge operation we're can make after the funds on Customer's card was blocked.
+```c#
+var orderId = "TESTORD000000000000000000"; //pass in the transaction's OrderId used in PaytureCommands.Block operation.
+var amount = 7444444; //transaction's Amount used in PaytureCommands.Block
+
+//Create and expand transaction for Api:
+var payTransactionApi = merchant.Api( PaytureCommands.Charge ).ExpandTransaction( orderId, amount );
+
+//Create and expand transaction for InPay:
+var payTransactionInPay = merchant.InPay( PaytureCommands.Charge ).ExpandTransaction( orderId, amount );
+
+//Create and expand transaction for EWallet:
+var payTransactionEWallet = merchant.EWallet( PaytureCommands.Charge ).ExpandTransaction( orderId, amount );
+```
+
 ### ExpandTransaction Methods for PaytureAPI
 #### ExpandTransaction( PayInfo info, IDictionary<string, dynamic> customFields, string customerKey, string paytureId  )
 This overload you call for api methods:
@@ -135,8 +152,8 @@ var customFields = new Dictionary<string, dynamic>{
 var customerKey = "testKey"; // 
 var paytureId = ""; //optional 
 
-//Expand transaction
-merchant.API( PaytureCommands.Pay ).ExpandTransaction( payInfo, customFields, customerKey, paytureId );
+//Create and expand transaction 
+var payTransaction = merchant.Api( PaytureCommands.Pay ).ExpandTransaction( payInfo, customFields, customerKey, paytureId );
 ```
 
 ### ExpandTransaction Methods for PaytureInPay
@@ -148,14 +165,16 @@ You must specify following fields of Data object then call Init api method of Pa
 * OrderId
 * Amount
 * IP
+
 Other fields is optional. Example:
 ```c#
 var orderId = "TESTORD000000000000000000";
 var amount = 102000; // in kopec
 var ip = "93.45.120.14";
 var data = new Data( SessionType.Pay, orderId, amount, ip );
-//Expand transaction
-merchant.InPay( PaytureCommands.Init ).ExpandTransaction( data );
+
+//Create and expand transaction 
+var initTransaction = merchant.InPay( PaytureCommands.Init ).ExpandTransaction( data );
 ```
 > Please note that the response from Init method will be contain SessionId - the unique payment's identifier - further you need to use it in PaytureCommands.Pay  api method for proseccing transaction on Payture side: call manually (suppose, we're have sessionId value from Init):
 *  merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( sessionId ) - use for SessionType=Pay or SessionType=Block
@@ -182,8 +201,8 @@ var template = "tempTag"; // optional, maybe empty or null
 var lang = "RU"; // optional, maybe empty or null
 var data = new Data ( sessionType, orderId, amount, ip, product, total, template, lang ) // required
 
-//Expand transaction
-merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, cardId, data ); //SessionType=Pay or SessionType=Block
+//Create and expand transaction 
+var initPayTransaction = merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, cardId, data ); //SessionType=Pay or SessionType=Block
 ```
 
 
@@ -203,8 +222,8 @@ var data = new Data
     Language = lang
 }; // required
 
-//Expand transaction
-merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, null, data ); // SessionType=Add
+//Create and expand transaction 
+var initAddTransaction = merchant.EWallet( PaytureCommands.Init ).ExpandTransaction( customer, null, data ); // SessionType=Add
 ```
 
 > Please note that the response from Init method will be contain SessionId - the unique payment's identifier - further you need to use it in PaytureCommands.Pay or PaytureCommands.Add api methods for proseccing transaction on Payture side: call manually (suppose, we're have sessionId value from Init):
@@ -231,8 +250,9 @@ var customer = new Customer( "testCustomerEW", "testPass" ); //required
 var data = new Data ( sessionType, orderId, amount, ip ) // required
 data.ConfirmCode = confirmCode;
 data.CustomFields = customFields;
-//Expand transaction
-merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, cardId, secureCode, data );
+
+//Create and expand transaction 
+var payTransaction = merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, cardId, secureCode, data );
 
 ```
 #### ExpandTransaction( Customer customer, Card card, Data data ) 
@@ -261,8 +281,8 @@ var card = new Card(
     111, //secure code
 ); //required
 
-//Expand transaction
-merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, card, data );
+//Create and expand transaction 
+var payTransaction = merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( customer, card, data );
 
 ```
 
@@ -281,8 +301,8 @@ var card = new Card(
     111, //secure code
 ); //required
 
-//Expand transaction
-merchant.EWallet( PaytureCommands.Add ).ExpandTransaction( customer, card );
+//Create and expand transaction 
+var addTransaction = merchant.EWallet( PaytureCommands.Add ).ExpandTransaction( customer, card );
 ```
 
 Please note, that you can add card *only for registered customer*.
@@ -306,8 +326,9 @@ var customer = new Customer(
     "78456865353", //phone, optional
     "newCustTest@gmailTest@.ru" // email, optional
      ); 
-//Expand transaction     
-merchant.EWallet( PaytureCommands.Reqister ).ExpandTransaction( customer );
+
+//Create and expand transaction      
+var registerTransaction = merchant.EWallet( PaytureCommands.Reqister ).ExpandTransaction( customer );
 ```
 
 
@@ -321,8 +342,9 @@ var customer = new Customer( "testCustomerEW", "testPass" );
 var cardId = "40252318-de07-4853-b43d-4b67f2cd2077";
 var amount = 50000; 
 var orderId = "TESTORD000000000000000000";
-//Expand transaction
-merchant.EWallet( PaytureCommands.SendCode ).ExpandTransaction( customer, cardId, amount, orderId );
+
+//Create and expand transaction 
+var sendCodeTransaction = merchant.EWallet( PaytureCommands.SendCode ).ExpandTransaction( customer, cardId, amount, orderId );
 ```
 * **Activate** (PaytureCommands.Activate). Specify customer, cardId and amount for this operation.
 Example:
@@ -330,16 +352,18 @@ Example:
 var customer = new Customer( "testCustomerEW", "testPass" ); 
 var cardId = "40252318-de07-4853-b43d-4b67f2cd2077";
 var amount = 100; //pass small amount for activate
-//Expand transaction
-merchant.EWallet( PaytureCommands.Activate ).ExpandTransaction( customer, cardId, amount );
+
+//Create and expand transaction 
+var activateTransaction = merchant.EWallet( PaytureCommands.Activate ).ExpandTransaction( customer, cardId, amount );
 ```
 * **Remove** (PaytureCommands.Remove). You need to specify customer and cardId only for this operation. For amount pass null.
 Example:
 ```c#
 var customer = new Customer( "testCustomerEW", "testPass" ); 
 var cardId = "40252318-de07-4853-b43d-4b67f2cd2077";
-//Expand transaction
-merchant.EWallet( PaytureCommands.Remove ).ExpandTransaction( customer, cardId, null );
+
+//Create and expand transaction 
+var removeTransaction = merchant.EWallet( PaytureCommands.Remove ).ExpandTransaction( customer, cardId, null );
 ```
 
 
@@ -352,8 +376,8 @@ Example for PaytureCommands.Pay:
 ```c#
 var sessionId = "e5c43d9f-2646-42bc-aeec-0b9005ceb972"; //received from PaytureCommands.Init 
 
-//Expand transaction
-merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( sessionId );
+//Create and expand transaction 
+var payTransaction = merchant.EWallet( PaytureCommands.Pay ).ExpandTransaction( sessionId );
 ```
 
 #### ExpandTransaction( string MD, string paRes )
@@ -363,8 +387,9 @@ Example for:
 ```c#
 var md = "20150624160356619170 "; //received from ACS 
 var pares = "ODJhYTk0NGUtMDk0ZlKJjjhbjlsrglJKJHNFKSRFLLkjnksdfjgdlgkd.... "; //received from ACS 
-//Expand transaction
-merchant.EWallet( PaytureCommands.PaySubmit3DS ).ExpandTransaction( md, pares );
+
+//Create and expand transaction 
+var paySubmitTransaction = merchant.EWallet( PaytureCommands.PaySubmit3DS ).ExpandTransaction( md, pares );
 ```
 
 ### ExpandTransaction Methods for PaytureApplePay and PaytureAndroidPay
@@ -423,12 +448,7 @@ This object used for PaytureEWallet and consist of following fields:
 Examples of creation instance of Card:
 ```c#
 var card = new Card( "4111111111111112", 10, 20, "Test Test", 123 ); //create card with CardId = null
-var card2 = new Card( "4111111111111112", 10, 20, "Test Test", 123, "40252318-de07-4853-b43d-4b67f2cd2077" ); //create card with CardId = "40252318-de07-4853-b43d-4b67f2cd2077"
-var card3 = new Card  //this used in PaytureCommand.Pay on merchant side
-{
-    CardId = "40252318-de07-4853-b43d-4b67f2cd2077",
-    SecureCode = 123
-}; 
+var cardWithId = new Card( "4111111111111112", 10, 20, "Test Test", 123, "40252318-de07-4853-b43d-4b67f2cd2077" ); //create card with CardId = "40252318-de07-4853-b43d-4b67f2cd2077"
 ```
 ### Data <a id="Data"></a>
 This is object used for PaytureEWallet and PaytureInPay, consist of following fields 

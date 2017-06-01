@@ -108,7 +108,7 @@ namespace TestApp
             else
             {
                 Console.WriteLine( $"Illegal input. Type yes/no or y/n for specify necessity of using SessionId in {command} operation." );
-                PromtForUseRegCard();
+                PromtForUseSessionId( command );
                 throw new Exception();
             }
         }
@@ -137,7 +137,11 @@ namespace TestApp
                             PayturePayOrAdd( PaytureCommands.Pay );
                             break;
                         }
-
+                        if( apiType == PaytureAPIType.apim )
+                        {
+                            Console.WriteLine("PaytureCommands.Pay for PaytureInPay can be process only with SessionId payment's identifier after PaytureCommands.Init api method.\nCall Init and set SessionId parameter.");
+                            break;
+                        }
                         //Only EWallet here
                         var customer = GetCustomer();
                         var data = DataForInit( PromtSessionType() );
