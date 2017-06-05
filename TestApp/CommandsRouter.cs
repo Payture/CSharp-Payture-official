@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TestApp
@@ -44,9 +43,10 @@ namespace TestApp
 
 
         #region Simple promts methods
-        static PaytureAPIType PromtService()
+        static PaytureAPIType PromtService( PaytureCommands command )
         {
-            Console.WriteLine( "Type the service api type: api, ewallet or inpay:" );
+            var addApi = command == PaytureCommands.Pay || command == PaytureCommands.Charge || command == PaytureCommands.Refund || command == PaytureCommands.Unblock || command == PaytureCommands.GetState;
+            Console.WriteLine( $"Type the service api type: {( addApi ? "api, " : "" )}ewallet, inpay" );
             var service = Console.ReadLine().ToUpper();
             if ( service == "EWALLET" || service == "E" )
                 return PaytureAPIType.vwapi;
@@ -56,15 +56,15 @@ namespace TestApp
                 return PaytureAPIType.api;
             else
             {
-                Console.WriteLine( "Illegal service. Only API, EWALLET or INPAY avaliable." );
-                PromtService();
-                throw new Exception();
+                Console.WriteLine( $"Illegal service. Only {( addApi ? "API, " : "" )} EWALLET or INPAY available.");
+                return PromtService( command );
             }
         }
 
-        static SessionType PromtSessionType()
+        static SessionType PromtSessionType( PaytureAPIType apiType )
         {
-            Console.WriteLine( "Specify The Session Type: pay, block or for ewallet only - add:)" );
+            var add = apiType == PaytureAPIType.vwapi;
+            Console.WriteLine( $"Specify The Session Type: pay, block {( add ? "add" : "" )}" );
             var session = Console.ReadLine().ToUpper();
             if ( session == "PAY" || session == "P" )
                 return SessionType.Pay;
@@ -74,9 +74,8 @@ namespace TestApp
                 return SessionType.Add;
             else
             {
-                Console.WriteLine( "Illegal Session Type. Only pay, block or add avaliable." );
-                PromtSessionType();
-                throw new Exception();
+                Console.WriteLine( $"Illegal Session Type. Only pay, block{(add ? " or add" : "")} available." );
+               return PromtSessionType( apiType );
             }
         }
 
@@ -91,8 +90,7 @@ namespace TestApp
             else
             {
                 Console.WriteLine( "Illegal input. Type yes/no or y/n for specify necessity of using registered card." );
-                PromtForUseRegCard();
-                throw new Exception();
+                return PromtForUseRegCard();
             }
         }
 
@@ -108,8 +106,7 @@ namespace TestApp
             else
             {
                 Console.WriteLine( $"Illegal input. Type yes/no or y/n for specify necessity of using SessionId in {command} operation." );
-                PromtForUseSessionId( command );
-                throw new Exception();
+                return PromtForUseSessionId( command );
             }
         }
         #endregion Simple promts methods
@@ -125,7 +122,7 @@ namespace TestApp
             {
                 case "PAY":
                     {
-                        apiType = PromtService();
+                        apiType = PromtService( PaytureCommands.Pay );
                         if ( apiType == PaytureAPIType.api )
                         {
                             APIPayOrBlock( PaytureCommands.Pay );
@@ -144,7 +141,7 @@ namespace TestApp
                         }
                         //Only EWallet here
                         var customer = GetCustomer();
-                        var data = DataForInit( PromtSessionType() );
+                        var data = DataForInit( PromtSessionType( apiType ) );
 
                         var regCard = PromtForUseRegCard();
                         if( !regCard )
@@ -197,9 +194,9 @@ namespace TestApp
                     }
                 case "INIT":
                     {
-                        apiType = PromtService();
+                        apiType = PromtService( PaytureCommands.Init );
 
-                        var sessionType = PromtSessionType();
+                        var sessionType = PromtSessionType( apiType );
                         var data = DataForInit( sessionType );
 
                         if ( apiType == PaytureAPIType.vwapi )
@@ -401,7 +398,7 @@ namespace TestApp
         }
         private static void  ChargeUnblockRefundGetState( PaytureCommands command )
         {
-            var api = PromtService();
+            var api = PromtService( command );
             Transaction trans;
             var orderId = allFields[PaytureParams.OrderId];
             var amount = allFields[ PaytureParams.Amount ] == null ? null : (long?) long.Parse( allFields[ PaytureParams.Amount ] );
