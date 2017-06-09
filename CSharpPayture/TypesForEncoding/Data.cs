@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CSharpPayture
@@ -26,14 +27,13 @@ namespace CSharpPayture
         }
         
         
-        public Data( SessionType sessionType, string orderId, long amount, string ip, string product, Int64? total, string confirmCode,  string[] customFields, string template, string lang ) : this( sessionType, orderId, amount, ip, product, total, null, template, lang )
+        public Data( SessionType sessionType, string orderId, long amount, string ip, string product, Int64? total, string confirmCode,  IDictionary<string, string> customFields, string template, string lang ) : this( sessionType, orderId, amount, ip, product, total, null, template, lang )
         {
             ConfirmCode = confirmCode;
             var resultStr = "";
-            for(int j = 0; j < customFields.Count(); j++)
-            {
-                resultStr += $"CustomField{j}={customFields[j]};";
-            }
+            foreach(var custPair in customFields )
+                resultStr += $"{custPair.Key}={custPair.Value};";
+
             CustomFields = ( customFields == null ? null : resultStr );
         }
         

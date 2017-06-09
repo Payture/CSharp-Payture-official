@@ -17,7 +17,7 @@ namespace CSharpPayture
         /// <param name="customerKey"></param>
         /// <param name="paytureId"></param>
         /// <returns>current expanded transaction</returns>
-        public Transaction ExpandTransaction( PayInfo info, IDictionary<string, dynamic> customFields, string customerKey, string paytureId )
+        public Transaction ExpandTransaction( PayInfo info, IDictionary<string, string> customFields, string customerKey, string paytureId )
         {
             if ( info == null )
                 return this;
