@@ -296,15 +296,18 @@ namespace TestApp
 
 
 
-        static void GenerateOrderId()
+        static string GenerateOrderId()
         {
-            allFields[ PaytureParams.OrderId ] = $"ORD_{Random.Next( 0, int.MaxValue )}_TEST";
+            var ord = $"ORD_{Random.Next( 0, int.MaxValue )}_TEST";
+            allFields[ PaytureParams.OrderId ] = ord;
+            return ord;
         }
 
-        static void GenerateAmount()
+        static long GenerateAmount()
         {
             var num = Random.Next( 50, 100000 );
             allFields[ PaytureParams.Amount ] =  num.ToString();
+            return num;
         }
 
         static Card GetCard()

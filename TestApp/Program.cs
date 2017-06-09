@@ -19,8 +19,6 @@ namespace TestApp
         {
             try
             {
-
-
                 Console.WriteLine( "Press space for get description of commands for this console program." );
                 if ( Console.ReadKey().Key == ConsoleKey.Spacebar )
                 {
@@ -44,7 +42,7 @@ namespace TestApp
                         break;
                     Router();
                 }
-
+                
                 Console.ReadLine();
             }
             catch ( Exception ex )

@@ -52,7 +52,7 @@ namespace CSharpPayture
             _sessionType = ( SessionType )Enum.Parse( typeof( SessionType ), data.SessionType );
 
             card.CardId = "FreePay";
-            var str = customer.GetPropertiesString() + card.GetPropertiesString() + data.GetPropertiesString() + data.CustomFields;
+            var str = customer.GetPropertiesString() + card.GetPropertiesString() + data.GetPropertiesString(); 
             return ExpandInternal( PaytureParams.DATA, str );
         }
 
