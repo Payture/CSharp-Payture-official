@@ -4,7 +4,7 @@ This is Offical Payture API for C#. We're try to make this as simple as possible
 Here you can explore how to use our API functions!
 
 ## Install
-Just download our package from NuGet *(please, take into account that this is the test package now)*:  **CSharpPaytureAPI** (lasr version is 1.0.4)
+Just download our package from NuGet *(please, take into account that this is the test package now)*:  **CSharpPaytureAPI** (last version is 1.0.4)
 
 
 And include to your project:
