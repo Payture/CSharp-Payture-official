@@ -12,10 +12,10 @@ namespace CSharpPayture
         /// <summary>
         /// Expand transaction for API Methods: Pay/Block
         /// </summary>
-        /// <param name="info"></param>
-        /// <param name="customFields"></param>
-        /// <param name="customerKey"></param>
-        /// <param name="paytureId"></param>
+        /// <param name="info">Object that contains params for transaction's processing</param>
+        /// <param name="customFields">Addition fields for processing operation</param>
+        /// <param name="customerKey">Customer's identifier in Payture AntiFraud system</param>
+        /// <param name="paytureId">Payment's identifier in Payture AntiFraud system</param>
         /// <returns>current expanded transaction</returns>
         public Transaction ExpandTransaction( PayInfo info, IDictionary<string, string> customFields, string customerKey, string paytureId )
         {
@@ -40,8 +40,8 @@ namespace CSharpPayture
          /// <summary>
         /// Expand transaction for 3DS Methods: Pay3DS/Block3DS
         /// </summary>
-        /// <param name="orderId"></param>
-        /// <param name="paRes"></param>
+        /// <param name="orderId">Current transaction's identifier in Merchant system</param>
+        /// <param name="paRes">Encrypted string that contains 3DS authentication result (recieved from ACS)</param>
         /// <returns>current expanded transaction</returns>
         public Transaction ExpandTransaction( string orderId, string paRes )
         {

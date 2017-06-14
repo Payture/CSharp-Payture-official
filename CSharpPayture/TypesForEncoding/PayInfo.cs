@@ -72,6 +72,17 @@ namespace CSharpPayture
                     throw new ArgumentException( "Invalid value. It must be greater or equal then 17 and consist of two digit.", "EYear" );
             }
         }
+
+        /// <summary>
+        /// Object that contains required params for transaction processing
+        /// </summary>
+        /// <param name="pan">Card's number.</param>
+        /// <param name="eMonth">The expiry month of card.</param>
+        /// <param name="eYear">The expiry year of card.</param>
+        /// <param name="cardHolder">Card's holder name.</param>
+        /// <param name="secureCode">CVC2/CVV2.</param>
+        /// <param name="ordId">Payment identifier in Merchant service system.</param>
+        /// <param name="amount">Amount of payment kopecs.</param>
         public PayInfo( string pan, string eMonth, string eYear, string cardHolder, string secureCode, string ordId, Int64 amount )
         {
             PAN = pan;
@@ -83,6 +94,16 @@ namespace CSharpPayture
             Amount = amount;
         }
 
+        /// <summary>
+        /// Object that contains required params for transaction processing
+        /// </summary>
+        /// <param name="pan">Card's number.</param>
+        /// <param name="eMonth">The expiry month of card.</param>
+        /// <param name="eYear">The expiry year of card.</param>
+        /// <param name="cardHolder">Card's holder name.</param>
+        /// <param name="secureCode">CVC2/CVV2.</param>
+        /// <param name="ordId">Payment identifier in Merchant service system.</param>
+        /// <param name="amount">Amount of payment kopecs.</param>
         public PayInfo( string pan, byte eMonth, byte eYear, string cardHolder, int secureCode, string ordId, Int64 amount ) : this ( pan, eMonth.ToString(), eYear.ToString(), cardHolder, secureCode.ToString(), ordId, amount )
         { }
     }

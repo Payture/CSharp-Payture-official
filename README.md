@@ -118,7 +118,7 @@ var payTransactionEWallet = merchant.EWallet( PaytureCommands.Charge ).ExpandTra
 ```
 
 ### ExpandTransaction Methods for PaytureAPI
-#### ExpandTransaction( PayInfo info, IDictionary<string, dynamic> customFields, string customerKey, string paytureId  )
+#### ExpandTransaction( PayInfo info, IDictionary<string, string> customFields, string customerKey, string paytureId  )
 This overload you call for api methods:
 * **Pay** (PaytureCommands.Pay).
 * **Block**  (PaytureCommands.Block).
@@ -144,7 +144,7 @@ var payInfo = new PayInfo(
      "TestOrder0000000000512154545", // payment's identifier in Merchant system
      41000 //amount, required
 );
-var customFields = new Dictionary<string, dynamic>{
+var customFields = new Dictionary<string, string>{
     { "IP", "93.120.05.36" },
     { "Description", "SomeUsefullHere" }
 }; //optional, can be null 
@@ -409,8 +409,8 @@ Description of provided params.
 
 ## Last Step - Send request <a id="sendRequest" ></a>
 After transaction is expanded you can send request to the Payture server via one of two methods:
-* ProcessOperation(); - this is sync method. The executed thread will be block while waiting response from the server - return the PaytureResponse object
-* ProcessOperationAsync(); - this async method, return Task<PaytureResponse> object;
+* ProcessOperation(); - this is sync method. The executed thread will be block while waiting response from the server - return the PaytureResponse object.
+* ProcessOperationAsync(); - this async method, return Task<PaytureResponse> object.
 
 
 ## Base Types <a id="baseTypes"></a>:
@@ -423,15 +423,37 @@ This object used for PaytureAPI and consist of following fields:
 | OrderId          | string       | Payment identifier in your service system.      |
 | Amount           | long         | Amount of payment kopec.                        |
 | PAN              | string       | Card's number.                                  |
-| EMonth           | int          | The expiry month of card.                       |
-| EYear            | int          | The expiry year of card.                        |
+| EMonth           | string       | The expiry month of card.                       |
+| EYear            | string       | The expiry year of card.                        |
 | CardHolder       | string       | Card's holder name.                             |
-| SecureCode       | int          | CVC2/CVV2.                                      |
+| SecureCode       | string       | CVC2/CVV2.                                      |
 
-Example of creation instence of PayInfo, only one constructor is available:
+You can use following constructors for creation PayInfo object:
 ```c#
-var info = new PayInfo( "4111111111111112", 10, 20, "Test Test", 123, "TestOrder0000000000512154545", 580000  );
+var infoFirst = new PayInfo( 
+    "4111111111111112", //PAN
+    10, //EMonth
+    20, //EYear
+    "Test Test", //CardHolder
+    123, //SecureCode
+    "TestOrder0000000000512154545", //OrderId
+    580000 //Amount 
+    );
+var infoSecond = new PayInfo( 
+    "4111111111111112", //PAN
+    "10", //EMonth
+    "20", //EYear
+    "Test Test", //CardHolder
+    "123", //SecureCode
+    "TestOrder0000000000512154545", //OrderId
+    580000 //Amount 
+    );
 ```
+As you can see theese two conscructors differ the type of recieved arguments for EMonth, EYear and SecureCode fields. Choose the most convenient. Internally theese fields pass a restriction check:
+* EMonth - takes values from 1 to 12 inclusively.
+* EYear - two last digit of expiry year, must be greate or equal to current year.
+* SecureCode - only digit allowed.
+
 
 ### Card <a id="Card"></a>
 This object used for PaytureEWallet and consist of following fields:
@@ -461,12 +483,56 @@ This is object used for PaytureEWallet and PaytureInPay, consist of following fi
 | Language         | string        | Addition parameter for determining language of template.                                                            |
 | OrderId          | string        | Payment identifier in your service system.                                                                          |
 | Amount           | long          | Amount of payment kopec.                                                                                            |
-| Url              | string        | The adress to which Customer will be return after completion of payment.                                            |
+| Url              | string        | The address to which Customer will be return after completion of payment.                                            |
 | Product          | string        | Name of product.                                                                                                    | 
 | Total            | int?          | Total Amount of purchase.                                                                                           |
 | ConfirmCode      | string        | Confirmation code from SMS. Required in case of confirm request for current transaction.                            |
 | CustomFields     | string        | Addition transaction's fields.                                                                                      |
 
+Examples of creation instance of Data:
+```c#
+//public Data( SessionType sessionType, string orderId, long amount, string ip )
+var dataFirst = new Data( 
+    SessionType.Pay, //SessionType.Pay - for one-stage operation; SessionType.Block - for two-stage operation; SessionType.Add - for adding card (PaytureEWallet)
+    "TestOrder0000000000512154545",
+    20000, 
+    "127.0.0.1"
+);
+
+//public Data( SessionType sessionType, string orderId, long amount, string ip, string product, Int64? total, string url, string template, string lang ) 
+var dataSecond = new Data( 
+    SessionType.Pay, //SessionType.Pay - for one-stage operation; SessionType.Block - for two-stage operation; SessionType.Add - for adding card (PaytureEWallet)
+    "TestOrder0000000000512154545",
+    20000, 
+    "127.0.0.1",
+    "CoolProductName",
+    20000,
+    "https://url.ru", //return address for customer then payment will be processed
+    "MyTemplate",
+    "RU"
+);
+
+
+var customFields = new Dictionary<string, string> { //This is addition transaction's fields in PaytureEWallet
+    { "Email", "test@test.com" },
+    { "CustomerDescription", "SoImpotantInfo" },
+    { "AdditionField", "AdditionInfo" }
+};
+var confirmCode = "123454787" //required in case in confirm request for current transaction OrderId, otherwise pass null
+//public Data( SessionType sessionType, string orderId, long amount, string ip, string product, Int64? total, string confirmCode,  IDictionary<string, string> customFields, string template, string lang )
+var dataThird = new Data( 
+    SessionType.Pay, //SessionType.Pay - for one-stage operation; SessionType.Block - for two-stage operation; SessionType.Add - for adding card (PaytureEWallet)
+    "TestOrder0000000000512154545",
+    20000, 
+    "127.0.0.1",
+    "CoolProductName",
+    20000,
+    confirmCode,
+    customFields,
+    "MyTemplate",
+    "RU"
+);
+```
 
 ### PaytureCommands <a id="PaytureCommands"></a>
 This is enum of **all** available commands for Payture API.
